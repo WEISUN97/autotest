@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 
 import serial
 import time
-import datetime
+from datetime import datetime
 from tool.tools import save_data_to_csv
 
 
@@ -49,7 +49,12 @@ class MK2000:
         return temperatures
 
     def mk2000_read_temperature(
-        self, duration=5, sample_rate=10, temperatures=[[], []], start_time=0
+        self,
+        duration=5,
+        sample_rate=10,
+        temperatures=[[], []],
+        start_time=0,
+        formatted_time="None",
     ):
         try:
             start_time2 = time.perf_counter() - start_time
@@ -83,9 +88,9 @@ class MK2000:
         end_time2 = time.perf_counter() - start_time
         print(f"MK2000 end:{end_time2}")
         print(f"MK2000 worked: {end_time2-start_time2}s")
-        current_date = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
         save_data_to_csv(
-            f"./temperature_data{current_date}.csv",
+            f"./result/{formatted_time}/temperature_data{current_date}.csv",
             temperatures,
             titles=["Time", "Temperature(°C)"],
         )
@@ -98,8 +103,11 @@ class MK2000:
 
 # Example usage
 if __name__ == "__main__":
+    current_time = datetime.now()
+    formatted_time = current_time.strftime("%Y_%m_%d_%H_%M")
+    os.makedirs(f"./result/{formatted_time}", exist_ok=True)
     # Adjust the COM port as needed
     mk2000 = MK2000(serial_port="COM3")
-    mk2000.mk2000_read_temperature()
+    mk2000.mk2000_read_temperature(formatted_time=formatted_time)
     # Close the connection
     mk2000.close_mk2000()

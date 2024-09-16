@@ -77,6 +77,8 @@ def plot_data(file_path, moku_channels, temperatures, stagePositions):
     lines4, labels4 = ax4.get_legend_handles_labels()
     ax3.legend(lines3 + lines4, labels3 + labels4, loc="upper left")
 
+    # Save the plot as a PNG file
+    plt.savefig("plot_filename.png", dpi=300)  # Higher DPI for better quality
     # Show the plot
     plt.show()
 

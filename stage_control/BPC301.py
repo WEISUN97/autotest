@@ -8,7 +8,7 @@ Kinesis Version Tested: 1.14.40
 Pizo controller: BPC301
 """
 
-import datetime
+from datetime import datetime
 import os
 import time
 import sys
@@ -70,7 +70,8 @@ class BPC301:
             In your context, channel.StartPolling(250) means that the system is set to check or poll the device for new data every 250 milliseconds
             """
             channel.StartPolling(250)  # 250ms polling rate
-            time.sleep(25)
+            # default is 25s
+            time.sleep(5)
             channel.EnableDevice()
             time.sleep(0.25)  # Wait for device to enable
 
@@ -94,6 +95,7 @@ class BPC301:
         step_number=10,
         time_interval=1,
         start_time=0,
+        formatted_time="None",
     ):
         # step_size in um, time_interval in seconds
         try:
@@ -123,9 +125,9 @@ class BPC301:
             self.channel.StopPolling()
             self.device.Disconnect()
             print("Stage disconnected")
-            current_date = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
             save_data_to_csv(
-                f"./StageBCP301_data{current_date}.csv",
+                f"./result/{formatted_time}/StageBCP301_data{current_date}.csv",
                 self.bcp301_position,
                 titles=["Time", "Position(um)"],
             )
@@ -147,5 +149,8 @@ class BPC301:
 
 
 if __name__ == "__main__":
+    current_time = datetime.now()
+    formatted_time = current_time.strftime("%Y_%m_%d_%H_%M")
+    os.makedirs(f"./result/{formatted_time}", exist_ok=True)
     bcp301 = BPC301()
-    bcp301.bcp301_move_stage()
+    bcp301.bcp301_move_stage(formatted_time=formatted_time)

@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from data.MK2000.MK2000 import MK2000
 from data.MokuPro.MokuPro import MokuPro
 from threading import Thread
+from datetime import datetime
 
 
 """
@@ -58,7 +59,7 @@ class DataLogger(MK2000, MokuPro):
         )
         print("Moku initialized")
 
-    def signal_record(self, start_time=0):
+    def signal_record(self, start_time=0, formatted_time="None"):
         moku_thread = Thread(target=self.moku_record, args=(self.duration, start_time))
         temperature_thread = Thread(
             target=self.mk2000_read_temperature,
@@ -67,6 +68,7 @@ class DataLogger(MK2000, MokuPro):
                 self.mk2000_sample_rate,
                 self.temperatures,
                 start_time,
+                formatted_time,
             ),
         )
         # Start both threads
@@ -74,20 +76,22 @@ class DataLogger(MK2000, MokuPro):
         temperature_thread.start()
         return moku_thread, temperature_thread
 
-    def log_complete_work(self, moku_thread, temperature_thread):
+    def log_complete_work(self, moku_thread, temperature_thread, formatted_time):
         # Wait for both threads to complete
         moku_thread.join()
         temperature_thread.join()
         # get the temperature data and the path of the moku file
-        self.moku_file = self.moku_download()
+        self.moku_file = self.moku_download(formatted_time)
         # print(f"MK2000 temperature data: {len(self.temperatures)}")
         return self.moku_file, self.temperatures
 
 
 if __name__ == "__main__":
-    dataLogger = DataLogger()
+    current_time = datetime.now()
+    formatted_time = current_time.strftime("%Y_%m_%d_%H_%M")
+    os.makedirs(f"./result/{formatted_time}", exist_ok=True)
+    dataLogger = DataLogger(duration=2)
     dataLogger.moku_settings(
-        duration=2,
         moku_sample_rate=1000,
         mk2000_sample_rate=25,
         waveform_settings=[
@@ -100,5 +104,5 @@ if __name__ == "__main__":
             }
         ],
     )
-    a, b = dataLogger.signal_record()
-    dataLogger.complete_work(a, b)
+    a, b = dataLogger.signal_record(formatted_time=formatted_time)
+    dataLogger.log_complete_work(a, b, formatted_time)

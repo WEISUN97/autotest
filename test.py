@@ -1,15 +1,10 @@
-import time
+from datetime import datetime
 
-# Start the timer
-start_time = time.perf_counter()
+# Get the current date and time
+current_time = datetime.now()
 
-# Code to measure
-time.sleep(1)  # Example code that takes 1 second
+# Format the date and time as 'year_month_day_hour_min'
+formatted_time = current_time.strftime("%Y_%m_%d_%H_%M")
 
-# Stop the timer
-end_time = time.perf_counter()
-
-# Calculate elapsed time
-elapsed_time = end_time - start_time
-
-print(f"Elapsed time: {elapsed_time} seconds")
+# Print the formatted time
+print(formatted_time)

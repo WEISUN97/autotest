@@ -27,7 +27,7 @@ class MokuPro:
         self.logFile = None
         self.output_format = output_format
         try:
-            self.i = Datalogger(IP, force_connect=False)
+            self.i = Datalogger(IP, force_connect=True)
         except Exception as e:
             # Close the connection to the Moku device
             # This ensures network resources and released correctly
@@ -134,17 +134,21 @@ class MokuPro:
         except Exception as e:
             print(f"An exception occurred: {e}")
 
-    def moku_download(self):
+    def moku_download(self, formatted_time="None"):
         # Download log from Moku, use liconverter to convert this .li file to .csv
         try:
             self.i.download(
                 "ssd",
                 self.logFile["file_name"],
-                os.path.join(os.getcwd(), self.logFile["file_name"]),
+                os.path.join(
+                    os.getcwd(), "result", formatted_time, self.logFile["file_name"]
+                ),
             )
             print("Downloaded log file to local directory.")
             # Convert the .li file to .csv/.mat/.npy
-            input_file = "./" + self.logFile["file_name"]  # Path to .li file
+            input_file = (
+                f"./result/{formatted_time}/" + self.logFile["file_name"]
+            )  # Path to .li file
             self.convert_li(input_file, output_format=self.output_format)
             return input_file[:-2] + self.output_format
 
