@@ -6,6 +6,7 @@
 #
 # (c) 2021 Liquid Instruments Pty. Ltd.
 #
+from datetime import datetime
 import os
 import time
 import subprocess
@@ -160,6 +161,9 @@ class MokuPro:
 
 
 if __name__ == "__main__":
+    current_time = datetime.now()
+    formatted_time = current_time.strftime("%Y_%m_%d_%H_%M")
+    os.makedirs(f"./result/{formatted_time}", exist_ok=True)
     MokuPro = MokuPro()
     MokuPro.moku_parameters_settings(
         waveform_settings=[
@@ -173,4 +177,4 @@ if __name__ == "__main__":
         ]
     )
     MokuPro.moku_record()
-    MokuPro.moku_download()
+    MokuPro.moku_download(formatted_time=formatted_time)

@@ -11,12 +11,18 @@ def is_float(value):
         return False  # Conversion failed, it's not a float
 
 
-def plot_data(file_path, moku_channels, temperatures, stagePositions):
+def plot_data(
+    moku_file_path,
+    moku_channels,
+    temperatures,
+    stagePositions,
+    formatted_time,
+):
     moku_x_data = []  # List of  x-axis data (order: moku, temperature, stage)
     moku_y_data = [[] for _ in range(len(moku_channels))]  # List of  y-axis data
 
     # Read the moku CSV file
-    with open(file_path, "r") as file:
+    with open(moku_file_path, "r") as file:
         reader = csv.reader(file)
         for row in reader:
             try:
@@ -78,7 +84,9 @@ def plot_data(file_path, moku_channels, temperatures, stagePositions):
     ax3.legend(lines3 + lines4, labels3 + labels4, loc="upper left")
 
     # Save the plot as a PNG file
-    plt.savefig("plot_filename.png", dpi=300)  # Higher DPI for better quality
+    plt.savefig(
+        f"./result/{formatted_time}/{formatted_time}_plot.png", dpi=300
+    )  # Higher DPI for better quality
     # Show the plot
     plt.show()
 
