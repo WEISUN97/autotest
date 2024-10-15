@@ -102,13 +102,22 @@ class BPC301:
             start_time1 = time.perf_counter() - start_time
             print(f"Stage Moving Started: {start_time1}")
             for k in range(repeat_number):
-                position = 0
+                position = self.origin
                 bcp301_record_time = time.perf_counter() - start_time
                 currentPosition = float(str(self.channel.GetPosition()))
                 self.bcp301_position[1] += [currentPosition]
                 self.bcp301_position[0] += [bcp301_record_time]
                 for i in range(step_number):
                     position += step_size
+                    self.channel.SetPosition(Decimal(position))
+                    time.sleep(time_interval)
+                    bcp301_record_time = time.perf_counter() - start_time
+                    currentPosition = float(str(self.channel.GetPosition()))
+                    self.bcp301_position[1] += [currentPosition]
+                    self.bcp301_position[0] += [bcp301_record_time]
+                # back
+                for i in range(step_number):
+                    position -= step_size
                     self.channel.SetPosition(Decimal(position))
                     time.sleep(time_interval)
                     bcp301_record_time = time.perf_counter() - start_time
@@ -127,7 +136,7 @@ class BPC301:
             print("Stage disconnected")
             current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
             save_data_to_csv(
-                f"./result/{formatted_time}/StageBCP301_data{current_date}.csv",
+                f"./result/{formatted_time}/StageBCP301_data{current_date}_ss{step_size}_sn{step_number}_ti{time_interval}.csv",
                 self.bcp301_position,
                 titles=["Time", "Position(um)"],
             )

@@ -42,16 +42,19 @@ class MokuPro:
         moku_sample_rate=100,
         channel_settings=[
             {"channel": 1, "impedance": "1MOhm", "coupling": "DC", "range": "400mVpp"},
-            {"channel": 2, "impedance": "1MOhm", "coupling": "DC", "range": "4Vpp"},
+            # {"channel": 2, "impedance": "1MOhm", "coupling": "DC", "range": "4Vpp"},
         ],
         acquisition_mode="Precision",
         waveform_settings=None,
     ):
-
+        self.i.disable_channel(channel=2)
+        self.i.disable_channel(channel=3)
+        self.i.disable_channel(channel=4)
         try:
             # Configure input channels
             if channel_settings:
                 for settings in channel_settings:
+
                     self.i.set_frontend(
                         channel=settings.get("channel", 1),
                         impedance=settings.get("impedance", "1MOhm"),
@@ -166,15 +169,16 @@ if __name__ == "__main__":
     os.makedirs(f"./result/{formatted_time}", exist_ok=True)
     MokuPro = MokuPro()
     MokuPro.moku_parameters_settings(
-        waveform_settings=[
-            {
-                "channel": 1,
-                "type": "Ramp",
-                "amplitude": 0.5,
-                "frequency": 1,
-                "symmetry": 50,
-            }
-        ]
+        moku_sample_rate=10000000,
+        # waveform_settings=[
+        #     {
+        #         "channel": 1,
+        #         "type": "Ramp",
+        #         "amplitude": 0.5,
+        #         "frequency": 1,
+        #         "symmetry": 50,
+        #     }
+        # ]
     )
     MokuPro.moku_record()
     MokuPro.moku_download(formatted_time=formatted_time)

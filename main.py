@@ -1,7 +1,7 @@
 from data.data_record import DataLogger
 from stage_control.BPC301 import BPC301
 from threading import Thread
-from tool.tools import plot_data
+from tool.tools import plot_data, plot_data_stage
 import time
 from datetime import datetime
 import os
@@ -16,25 +16,25 @@ Operation process:
 """
 
 
-def operation(origin, repeat_number, step_size, step_number, time_interval):
+def operation(duration, origin, repeat_number, step_size, step_number, time_interval):
     try:
 
         # initialize the data logger
-        dataLogger = DataLogger(duration=21)
+        dataLogger = DataLogger(duration=duration)
         # initialize the stage controller
         bcp301 = BPC301(origin=origin)
         dataLogger.moku_settings(
-            moku_sample_rate=1000,
-            mk2000_sample_rate=25,
-            waveform_settings=[
-                {
-                    "channel": 1,
-                    "type": "Sine",
-                    "amplitude": 1,
-                    "frequency": 1,
-                    # "symmetry": 50,
-                }
-            ],
+            moku_sample_rate=100000,
+            mk2000_sample_rate=1,
+            # waveform_settings=[
+            #     {
+            #         "channel": 1,
+            #         "type": "Sine",
+            #         "amplitude": 1,
+            #         "frequency": 1,
+            #         # "symmetry": 50,
+            #     }
+            # ],
         )
         # Start time of the experiment
         start_time = time.perf_counter()
@@ -66,7 +66,7 @@ def operation(origin, repeat_number, step_size, step_number, time_interval):
             moku_thread, temperature_thread, formatted_time
         )
         # Plot the data
-        plot_data(
+        plot_data_stage(
             moku_file,
             moku_channels=[1],
             temperatures=temperatures,
@@ -79,9 +79,10 @@ def operation(origin, repeat_number, step_size, step_number, time_interval):
 
 
 # Define default values for the stage movement
-origin = 0  # origin position of the stage
-repeat_number = 2  # number of times the stage will move
-step_size = 0.2  # step size in um
-step_number = 10  # number of steps
+origin = 1.7  # origin position of the stage
+repeat_number = 1  # number of times the stage will move
+step_size = 0.005  # step size in um
+step_number = 160  # number of steps
 time_interval = 1  # time interval in seconds
-operation(origin, repeat_number, step_size, step_number, time_interval)
+running_time = 2 * repeat_number * step_number * time_interval  # total running time
+operation(running_time, origin, repeat_number, step_size, step_number, time_interval)

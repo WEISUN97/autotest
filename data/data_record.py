@@ -43,8 +43,8 @@ class DataLogger(MK2000, MokuPro):
         mk2000_sample_rate=20,
         moku_sample_rate=100,
         channel_settings=[
-            {"channel": 1, "impedance": "1MOhm", "coupling": "DC", "range": "400mVpp"},
-            {"channel": 2, "impedance": "1MOhm", "coupling": "DC", "range": "4Vpp"},
+            {"channel": 1, "impedance": "50Ohm", "coupling": "DC", "range": "400mVpp"},
+            # {"channel": 2, "impedance": "1MOhm", "coupling": "DC", "range": "4Vpp"},
         ],
         acquisition_mode="Precision",
         waveform_settings=None,
