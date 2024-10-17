@@ -22,9 +22,9 @@ def operation(duration, origin, repeat_number, step_size, step_number, time_inte
         # initialize the data logger
         dataLogger = DataLogger(duration=duration)
         # initialize the stage controller
-        bcp301 = BPC301(origin=origin)
+        bcp301 = BPC301(origin=origin, back=False)
         dataLogger.moku_settings(
-            moku_sample_rate=100000,
+            moku_sample_rate=10000,
             mk2000_sample_rate=1,
             # waveform_settings=[
             #     {
@@ -72,6 +72,7 @@ def operation(duration, origin, repeat_number, step_size, step_number, time_inte
             temperatures=temperatures,
             stagePositions=bcp301_position,
             formatted_time=formatted_time,
+            step_size=step_size,
         )
 
     except Exception as e:
@@ -79,10 +80,10 @@ def operation(duration, origin, repeat_number, step_size, step_number, time_inte
 
 
 # Define default values for the stage movement
-origin = 1.7  # origin position of the stage
+origin = 3.8  # origin position of the stage (5.45)
 repeat_number = 1  # number of times the stage will move
-step_size = 0.005  # step size in um
-step_number = 160  # number of steps
+step_size = 0.01  # step size in um
+step_number = 200  # number of steps
 time_interval = 1  # time interval in seconds
-running_time = 2 * repeat_number * step_number * time_interval  # total running time
+running_time = repeat_number * step_number * time_interval  # total running time
 operation(running_time, origin, repeat_number, step_size, step_number, time_interval)

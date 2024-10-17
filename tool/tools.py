@@ -100,6 +100,7 @@ def plot_data_stage(
     temperatures,
     stagePositions,
     formatted_time,
+    step_size,
 ):
     moku_x_data = []  # List of  x-axis data (order: moku, temperature, stage)
     moku_y_data = [[] for _ in range(len(moku_channels))]  # List of  y-axis data
@@ -109,7 +110,8 @@ def plot_data_stage(
         for row in reader:
             try:
                 if is_float(row[0]) == True:
-                    moku_x_data.append(float(row[0]))  # Convert x data to float
+                    a = float(row[0]) * step_size
+                    moku_x_data.append(a)  # Convert x data to float
                     for i, col in enumerate(moku_channels):
                         moku_y_data[i].append(
                             float(row[col])
@@ -117,6 +119,7 @@ def plot_data_stage(
             except ValueError as e:
                 print(f"Skipping row due to conversion error: {row} - {e}")
                 continue
+    # print(moku_x_data)
     # Create the figure and the first y-axis
     fig, ax1 = plt.subplots(figsize=(10, 8))
     # upper plot
@@ -125,13 +128,15 @@ def plot_data_stage(
         ax1.plot(moku_x_data, y, label=f"Channel {moku_channels[i]}")
 
     # Set labels for the left y-axis
-    ax1.set_xlabel("Time(s)")
+    ax1.set_xlabel("Position(µm)")
     ax1.set_ylabel("Voltage (V)")
     ax1.grid(True)
 
     # Create the second y-axis for temperature
     ax2 = ax1.twinx()
     ax2.set_ylabel("Position (µm)")
+    for m in range(len(stagePositions[0])):
+        stagePositions[0][m] = stagePositions[0][m] * step_size
     ax2.plot(stagePositions[0], stagePositions[1], label="Positions", color="r")
 
     # Set the title
@@ -209,11 +214,12 @@ def plot_average(ax1, moku_x_data, moku_y_data, window_size):
 # Example usage (if this script is run directly, otherwise, import and use in another script)
 if __name__ == "__main__":
     ax1, time, voltage = plot_data_stage(
-        "./result/2024_09_30_10_28/MokuDataLoggerData_20000101_000410.csv",
+        "./result/2024_10_16_16_44/MokuDataLoggerData_20000101_003813.csv",
         [1],
         [[1, 2, 3], [1, 2, 3]],
         [[1, 2, 3], [1, 2, 3]],
-        formatted_time="2024_09_20_10_11",
+        formatted_time="2024_10_15_16_21",
+        step_size=0.05,
     )
     # plot_average(
     #     ax1,

@@ -11,6 +11,8 @@ import os
 import time
 import subprocess
 from moku.instruments import Datalogger
+from threading import Thread
+
 
 """
 Output format can be: ([csv, mat, npy])
@@ -150,10 +152,15 @@ class MokuPro:
             )
             print("Downloaded log file to local directory.")
             # Convert the .li file to .csv/.mat/.npy
-            input_file = (
-                f"./result/{formatted_time}/" + self.logFile["file_name"]
-            )  # Path to .li file
-            self.convert_li(input_file, output_format=self.output_format)
+            # Path to .li file
+            input_file = f"./result/{formatted_time}/" + self.logFile["file_name"]
+            convert_thread = Thread(
+                target=self.convert_li, args=(input_file, self.output_format)
+            )
+            convert_thread.start()
+            # wait for the conversion to complete
+            convert_thread.join()
+            # self.convert_li(input_file, output_format=self.output_format)
             return input_file[:-2] + self.output_format
 
         except Exception as e:

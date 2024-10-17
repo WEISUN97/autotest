@@ -36,12 +36,13 @@ from System import Decimal  # necessary for real world units
 
 
 class BPC301:
-    def __init__(self, serial_no="41845229", origin=0):
+    def __init__(self, serial_no="41845229", origin=0, back=False):
         self.serial_no = serial_no
         self.origin = origin
         self.device = None
         self.channel = None
         self.bcp301_position = [[], []]
+        self.back = back
 
         try:
             # create new device.
@@ -96,6 +97,7 @@ class BPC301:
         time_interval=1,
         start_time=0,
         formatted_time="None",
+        back=False,
     ):
         # step_size in um, time_interval in seconds
         try:
@@ -116,15 +118,16 @@ class BPC301:
                     self.bcp301_position[1] += [currentPosition]
                     self.bcp301_position[0] += [bcp301_record_time]
                 # back
-                for i in range(step_number):
-                    position -= step_size
-                    self.channel.SetPosition(Decimal(position))
-                    time.sleep(time_interval)
-                    bcp301_record_time = time.perf_counter() - start_time
-                    currentPosition = float(str(self.channel.GetPosition()))
-                    self.bcp301_position[1] += [currentPosition]
-                    self.bcp301_position[0] += [bcp301_record_time]
-                    # print(f"Current Position: {currentPosition}")
+                if self.back:
+                    for i in range(step_number):
+                        position -= step_size
+                        self.channel.SetPosition(Decimal(position))
+                        time.sleep(time_interval)
+                        bcp301_record_time = time.perf_counter() - start_time
+                        currentPosition = float(str(self.channel.GetPosition()))
+                        self.bcp301_position[1] += [currentPosition]
+                        self.bcp301_position[0] += [bcp301_record_time]
+                        # print(f"Current Position: {currentPosition}")
                 self.channel.SetPosition(Decimal(self.origin))
                 time.sleep(time_interval)
             end_time1 = time.perf_counter() - start_time
