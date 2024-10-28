@@ -18,9 +18,8 @@ Operation process:
 
 def operation(duration, origin, repeat_number, step_size, step_number, time_interval):
     try:
-
         # initialize the data logger
-        dataLogger = DataLogger(duration=duration)
+        dataLogger = DataLogger(duration=duration, unable_device=["MK2000"])
         # initialize the stage controller
         bcp301 = BPC301(origin=origin, back=False)
         dataLogger.moku_settings(
@@ -66,24 +65,45 @@ def operation(duration, origin, repeat_number, step_size, step_number, time_inte
             moku_thread, temperature_thread, formatted_time
         )
         # Plot the data
-        plot_data_stage(
-            moku_file,
-            moku_channels=[1],
-            temperatures=temperatures,
-            stagePositions=bcp301_position,
-            formatted_time=formatted_time,
-            step_size=step_size,
-        )
+        # temperature included
+        if temperatures[0]:
+            plot_data(
+                moku_file,
+                moku_channels=[1],
+                temperatures=temperatures,
+                stagePositions=bcp301_position,
+                formatted_time=formatted_time,
+                step_size=step_size,
+            )
+
+        # temperature not included
+        if not temperatures[0]:
+            plot_data_stage(
+                moku_file,
+                moku_channels=[1],
+                stagePositions=bcp301_position,
+                formatted_time=formatted_time,
+                step_size=step_size,
+            )
 
     except Exception as e:
         print(f"Exception occurred: {e}")
 
 
 # Define default values for the stage movement
-origin = 3.8  # origin position of the stage (5.45)
-repeat_number = 1  # number of times the stage will move
-step_size = 0.01  # step size in um
-step_number = 200  # number of steps
-time_interval = 1  # time interval in seconds
-running_time = repeat_number * step_number * time_interval  # total running time
+origin = 0
+repeat_number = 1
+step_size = 0.05
+step_number = 5
+time_interval = 1
+running_time = repeat_number * step_number * time_interval
 operation(running_time, origin, repeat_number, step_size, step_number, time_interval)
+
+
+# # Define default values for the stage movement
+# origin = 3.8  # origin position of the stage
+# repeat_number = 1  # number of times the stage will move
+# step_size = 0.01  # step size in um
+# step_number = 200  # number of steps
+# time_interval = 1  # time interval in seconds
+# running_time = repeat_number * step_number * time_interval  # total running time

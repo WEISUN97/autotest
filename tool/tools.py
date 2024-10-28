@@ -19,8 +19,10 @@ def plot_data(
     temperatures,
     stagePositions,
     formatted_time,
+    step_size,
 ):
     moku_x_data = []  # List of  x-axis data (order: moku, temperature, stage)
+    data_time = []  # List of  x-axis data (order: moku, temperature, stage)
     moku_y_data = [[] for _ in range(len(moku_channels))]  # List of  y-axis data
     # Read the moku CSV file
     with open(moku_file_path, "r") as file:
@@ -28,7 +30,10 @@ def plot_data(
         for row in reader:
             try:
                 if is_float(row[0]) == True:
-                    moku_x_data.append(float(row[0]))  # Convert x data to float
+                    data_time.append(float(row[0]))
+                    moku_x_data.append(
+                        float(row[0]) * step_size
+                    )  # Convert x data to float
                     for i, col in enumerate(moku_channels):
                         moku_y_data[i].append(
                             float(row[col])
@@ -44,7 +49,7 @@ def plot_data(
     # upper plot
     # Plot moku data on the left y-axis
     for i, y in enumerate(moku_y_data):
-        ax1.plot(moku_x_data, y, label=f"Channel {moku_channels[i]}")
+        ax1.plot(data_time, y, label=f"Channel {moku_channels[i]}")
 
     # Set labels for the left y-axis
     ax1.set_xlabel("Time(s)")
@@ -57,7 +62,7 @@ def plot_data(
     ax2.plot(temperatures[0], temperatures[1], label="Temperature", color="r")
 
     # Set the title
-    ax1.set_title("Signal vs Temperature")
+    ax1.set_title("Signal and Temperature")
 
     # Combine legends from both axes
     lines1, labels1 = ax1.get_legend_handles_labels()
@@ -67,7 +72,7 @@ def plot_data(
     # lower plot
     # Set labels for the left y-axis
     if stagePositions:
-        ax3.set_xlabel("Time (s)")
+        ax3.set_xlabel("Position(µm)")
         ax3.set_ylabel("Voltage (V)")
         ax3.grid(True)
         for i, y in enumerate(moku_y_data):
@@ -75,6 +80,8 @@ def plot_data(
         # Create the second y-axis for stage position
         ax4 = ax3.twinx()
         ax4.set_ylabel(f"Position (µm)")
+        for m in range(len(stagePositions[0])):
+            stagePositions[0][m] = stagePositions[0][m] * step_size
         ax4.plot(stagePositions[0], stagePositions[1], label="Positions", color="r")
 
         # Set the title
@@ -97,7 +104,6 @@ def plot_data(
 def plot_data_stage(
     moku_file_path,
     moku_channels,
-    temperatures,
     stagePositions,
     formatted_time,
     step_size,
