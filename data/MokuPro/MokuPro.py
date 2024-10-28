@@ -49,9 +49,12 @@ class MokuPro:
         acquisition_mode="Precision",
         waveform_settings=None,
     ):
-        self.i.disable_channel(channel=2)
-        self.i.disable_channel(channel=3)
-        self.i.disable_channel(channel=4)
+        # Disable channels
+        channel_not_work = [1, 2, 3, 4]
+        for i in range(len(channel_settings)):
+            channel_not_work.remove(channel_settings[i]["channel"])
+        for i in range(len(channel_not_work)):
+            self.i.disable_channel(channel=channel_not_work[i])
         try:
             # Configure input channels
             if channel_settings:
@@ -74,6 +77,7 @@ class MokuPro:
                         channel=settings.get("channel", 1),
                         type=settings.get("type", "Sine"),
                         amplitude=settings.get("amplitude", 0),
+                        dc_level=settings.get("dc_level", 0),
                         frequency=settings.get("frequency", 10),
                         symmetry=settings.get("symmetry", 50),
                         offset=settings.get("offset", 0),
@@ -103,8 +107,8 @@ class MokuPro:
             print(f"Moku start: {start_time1}")
             self.logFile = self.i.start_logging(
                 duration,
-                trigger_source="Input2",
-                trigger_level=0,
+                # trigger_source="Input1",
+                # trigger_level=0,
             )
 
             # Wait for the logging session to complete
@@ -140,20 +144,26 @@ class MokuPro:
         except Exception as e:
             print(f"An exception occurred: {e}")
 
-    def moku_download(self, formatted_time="None"):
+    def moku_download(self, formatted_time="None", MDT693_voltage=0):
         # Download log from Moku, use liconverter to convert this .li file to .csv
         try:
             self.i.download(
                 "ssd",
                 self.logFile["file_name"],
                 os.path.join(
-                    os.getcwd(), "result", formatted_time, self.logFile["file_name"]
+                    os.getcwd(),
+                    "result",
+                    formatted_time + f"_{MDT693_voltage}V",
+                    self.logFile["file_name"],
                 ),
             )
             print("Downloaded log file to local directory.")
             # Convert the .li file to .csv/.mat/.npy
             # Path to .li file
-            input_file = f"./result/{formatted_time}/" + self.logFile["file_name"]
+            input_file = (
+                f"./result/{formatted_time}_{MDT693_voltage}V/"
+                + self.logFile["file_name"]
+            )
             convert_thread = Thread(
                 target=self.convert_li, args=(input_file, self.output_format)
             )
@@ -161,13 +171,16 @@ class MokuPro:
             # wait for the conversion to complete
             convert_thread.join()
             # self.convert_li(input_file, output_format=self.output_format)
+            self.i.relinquish_ownership()
+            print("Close the connection")
             return input_file[:-2] + self.output_format
 
         except Exception as e:
             print(f"Exception occurred: {e}")
         finally:
-            self.i.relinquish_ownership()
-            print("Close the connection")
+            if self.i:
+                self.i.relinquish_ownership()
+                print("Close the connection")
 
 
 if __name__ == "__main__":

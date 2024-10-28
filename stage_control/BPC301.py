@@ -36,13 +36,16 @@ from System import Decimal  # necessary for real world units
 
 
 class BPC301:
-    def __init__(self, serial_no="41845229", origin=0, back=False):
+    def __init__(
+        self, serial_no="41845229", origin=0, back=False, need_initialized=[True, True]
+    ):
         self.serial_no = serial_no
         self.origin = origin
         self.device = None
         self.channel = None
         self.bcp301_position = [[], []]
         self.back = back
+        self.need_initialized = need_initialized
 
         try:
             # create new device.
@@ -84,7 +87,6 @@ class BPC301:
             time.sleep(0.25)
             # Move the stage to the origin
             self.channel.SetPosition(Decimal(self.origin))
-
         except Exception as e:
             print(e)
 
@@ -97,7 +99,7 @@ class BPC301:
         time_interval=1,
         start_time=0,
         formatted_time="None",
-        back=False,
+        MDT693_voltage=0,
     ):
         # step_size in um, time_interval in seconds
         try:
@@ -139,7 +141,7 @@ class BPC301:
             print("Stage disconnected")
             current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
             save_data_to_csv(
-                f"./result/{formatted_time}/StageBCP301_data{current_date}_ss{step_size}_sn{step_number}_ti{time_interval}.csv",
+                f"./result/{formatted_time}_{MDT693_voltage}V/StageBCP301_data{current_date}_ss{step_size}_sn{step_number}_ti{time_interval}.csv",
                 self.bcp301_position,
                 titles=["Time", "Position(um)"],
             )

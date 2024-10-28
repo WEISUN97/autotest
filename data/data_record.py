@@ -26,29 +26,29 @@ class DataLogger(MK2000, MokuPro):
         output_format="csv",
         serial_port="COM3",
         duration=10,
-        unable_device=[],
+        disable_device=[],
     ):
         device_dic = {"MK2000": True, "MokuPro": True}
         try:
-            if len(unable_device) != 0:
-                for i in range(len(unable_device)):
-                    if unable_device[i] == "MK2000":
+            if len(disable_device) != 0:
+                for i in range(len(disable_device)):
+                    if disable_device[i] == "MK2000":
                         device_dic["MK2000"] = False
-                    elif unable_device[i] == "MokuPro":
+                    elif disable_device[i] == "MokuPro":
                         device_dic["MokuPro"] = False
         except ValueError as ve:
             print(ve)
             print("Please enter the correct device name")
 
-        if len(unable_device) != 0:
-            for i in range(len(unable_device)):
-                if unable_device[i] not in device_dic:
+        if len(disable_device) != 0:
+            for i in range(len(disable_device)):
+                if disable_device[i] not in device_dic:
                     print("Please enter the correct device name")
                     break
                 else:
-                    if unable_device[i] == "MK2000":
+                    if disable_device[i] == "MK2000":
                         device_dic["MK2000"] = False
-                    elif unable_device[i] == "MokuPro":
+                    elif disable_device[i] == "MokuPro":
                         device_dic["MokuPro"] = False
         self.device_dic = device_dic
         self.moku_file = None
@@ -74,6 +74,15 @@ class DataLogger(MK2000, MokuPro):
         ],
         acquisition_mode="Precision",
         waveform_settings=None,
+        # [
+        #     {
+        #         "channel": 1,
+        #         "type": "Ramp",
+        #         "amplitude": 0.5,
+        #         "frequency": 1,
+        #         "symmetry": 50,
+        #     }
+        # ],
     ):
         self.moku_sample_rate = moku_sample_rate
         self.mk2000_sample_rate = mk2000_sample_rate
@@ -107,13 +116,15 @@ class DataLogger(MK2000, MokuPro):
             temperature_thread.start()
         return moku_thread, temperature_thread
 
-    def log_complete_work(self, moku_thread, temperature_thread, formatted_time):
+    def log_complete_work(
+        self, moku_thread, temperature_thread, formatted_time, MDT693_voltage=0
+    ):
         # Wait for both threads to complete
         moku_thread.join()
         if self.device_dic["MK2000"]:
             temperature_thread.join()
         # get the temperature data and the path of the moku file
-        self.moku_file = self.moku_download(formatted_time)
+        self.moku_file = self.moku_download(formatted_time, MDT693_voltage)
         # print(f"MK2000 temperature data: {len(self.temperatures)}")
         return self.moku_file, self.temperatures
 

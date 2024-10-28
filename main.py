@@ -16,31 +16,42 @@ Operation process:
 """
 
 
-def operation(duration, origin, repeat_number, step_size, step_number, time_interval):
+def operation(
+    duration,
+    origin,
+    repeat_number,
+    step_size,
+    step_number,
+    time_interval,
+    wafeform_settings,
+    display_plt=True,
+):
     try:
         # initialize the data logger
-        dataLogger = DataLogger(duration=duration, unable_device=["MK2000"])
+        dataLogger = DataLogger(duration=duration, disable_device=["MK2000"])
         # initialize the stage controller
         bcp301 = BPC301(origin=origin, back=False)
+        MDT693_voltage = wafeform_settings[0]["dc_level"]
         dataLogger.moku_settings(
             moku_sample_rate=10000,
             mk2000_sample_rate=1,
-            # waveform_settings=[
-            #     {
-            #         "channel": 1,
-            #         "type": "Sine",
-            #         "amplitude": 1,
-            #         "frequency": 1,
-            #         # "symmetry": 50,
-            #     }
-            # ],
+            waveform_settings=wafeform_settings,
+            channel_settings=[
+                {
+                    "channel": 1,
+                    "impedance": "50Ohm",
+                    "coupling": "DC",
+                    "range": "400mVpp",
+                },
+                # {"channel": 2, "impedance": "1MOhm", "coupling": "DC", "range": "4Vpp"},
+            ],
         )
         # Start time of the experiment
         start_time = time.perf_counter()
         current_time = datetime.now()
         # Format the date and time as 'year_month_day_hour_min'
         formatted_time = current_time.strftime("%Y_%m_%d_%H_%M")
-        os.makedirs(f"./result/{formatted_time}", exist_ok=True)
+        os.makedirs(f"./result/{formatted_time}_{MDT693_voltage}V", exist_ok=True)
         bcp301_stageThread = Thread(
             target=bcp301.bcp301_move_stage,
             args=(
@@ -50,6 +61,7 @@ def operation(duration, origin, repeat_number, step_size, step_number, time_inte
                 time_interval,
                 start_time,
                 formatted_time,
+                MDT693_voltage,
             ),
         )
         # Record the moku and temperature data
@@ -62,7 +74,7 @@ def operation(duration, origin, repeat_number, step_size, step_number, time_inte
         # Wait for all threads to complete
         bcp301_position = bcp301.bcp301_complete_work(bcp301_stageThread)
         moku_file, temperatures = dataLogger.log_complete_work(
-            moku_thread, temperature_thread, formatted_time
+            moku_thread, temperature_thread, formatted_time, MDT693_voltage
         )
         # Plot the data
         # temperature included
@@ -84,20 +96,45 @@ def operation(duration, origin, repeat_number, step_size, step_number, time_inte
                 stagePositions=bcp301_position,
                 formatted_time=formatted_time,
                 step_size=step_size,
+                MDT693_voltage=MDT693_voltage,
+                display_plt=display_plt,
             )
 
     except Exception as e:
         print(f"Exception occurred: {e}")
 
 
-# Define default values for the stage movement
-origin = 0
-repeat_number = 1
-step_size = 0.05
-step_number = 5
-time_interval = 1
-running_time = repeat_number * step_number * time_interval
-operation(running_time, origin, repeat_number, step_size, step_number, time_interval)
+# Define default values for the waveform settings
+wafeform_settings = [
+    {
+        "channel": 1,
+        "type": "DC",
+        "dc_level": 0,
+    }
+]
+
+# n = 19 # 18*0.25 = 4.5
+n = 2
+display_plt = False if n > 1 else True
+for i in range(n):
+    wafeform_settings[0]["dc_level"] = i * 0.25
+    # Define default values for the stage movement
+    origin = 0
+    repeat_number = 1
+    step_size = 0.05
+    step_number = 2
+    time_interval = 1
+    running_time = repeat_number * step_number * time_interval
+    operation(
+        running_time,
+        origin,
+        repeat_number,
+        step_size,
+        step_number,
+        time_interval,
+        wafeform_settings,
+        display_plt,
+    )
 
 
 # # Define default values for the stage movement

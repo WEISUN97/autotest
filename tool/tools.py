@@ -107,6 +107,8 @@ def plot_data_stage(
     stagePositions,
     formatted_time,
     step_size,
+    MDT693_voltage=0,
+    display_plt=True,
 ):
     moku_x_data = []  # List of  x-axis data (order: moku, temperature, stage)
     moku_y_data = [[] for _ in range(len(moku_channels))]  # List of  y-axis data
@@ -155,11 +157,13 @@ def plot_data_stage(
 
     # Save the plot as a PNG file
     plt.savefig(
-        f"./result/{formatted_time}/{formatted_time}_plot.png", dpi=300
+        f"./result/{formatted_time}_{MDT693_voltage}V/{formatted_time}_plot.png",
+        dpi=300,
     )  # Higher DPI for better quality
     # Show the plot
-    plt.show()
-    return ax1, moku_x_data, moku_y_data[0]
+    if display_plt:
+        plt.show()
+        return ax1, moku_x_data, moku_y_data[0]
 
 
 # plot mutiple data
@@ -220,11 +224,10 @@ def plot_average(ax1, moku_x_data, moku_y_data, window_size):
 # Example usage (if this script is run directly, otherwise, import and use in another script)
 if __name__ == "__main__":
     ax1, time, voltage = plot_data_stage(
-        "./result/2024_10_16_16_44/MokuDataLoggerData_20000101_003813.csv",
-        [1],
+        "./result/2024_10_28_14_25/MokuDataLoggerData_20000101_000257.csv",
+        [1, 2],
         [[1, 2, 3], [1, 2, 3]],
-        [[1, 2, 3], [1, 2, 3]],
-        formatted_time="2024_10_15_16_21",
+        formatted_time="2024_10_28_14_25",
         step_size=0.05,
     )
     # plot_average(
