@@ -9,3 +9,6 @@ a = [
 ]
 b = [x + 1 for x in range(len(a))]
 print(b)
+
+
+'& "C:/Users/cnmuser/Desktop/Non-hookean/autotest/.conda/python.exe" -m pip list'
