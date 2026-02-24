@@ -5,7 +5,7 @@ Date of Last Modification on Github: 2023-07-28
 Python Version Used: python 3.10.5
 Kinesis Version Tested: 1.14.40
 
-Pizo controller: BPC301
+Pizo controller: BPC303
 """
 
 from datetime import datetime
@@ -14,7 +14,7 @@ import time
 import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from tool.tools import save_data_to_csv
+# from tool.tools import save_data_to_csv
 
 import clr
 
@@ -35,15 +35,20 @@ from Thorlabs.MotionControl.Benchtop.PiezoCLI import *
 from System import Decimal  # necessary for real world units
 
 
-class BPC301:
+class BPC303:
     def __init__(
-        self, serial_no="41845229", origin=0, back=False, need_initialized=[True, True]
+        self,
+        serial_no="71492464",
+        origin=0,
+        back=False,
+        need_initialized=[True, True],
+        # self, serial_no="41845229", origin=0, back=False, need_initialized=[True, True]
     ):
         self.serial_no = serial_no
         self.origin = origin
         self.device = None
         self.channel = None
-        self.bcp301_position = [[], []]
+        self.bcp303_position = [[], []]
         self.back = back
         self.need_initialized = need_initialized
 
@@ -91,10 +96,10 @@ class BPC301:
             print(e)
 
     # Move the stage
-    def bcp301_move_stage(
+    def bcp303_move_stage(
         self,
         repeat_number=1,
-        step_size=0.1,
+        step_size=1,
         step_number=10,
         time_interval=1,
         start_time=0,
@@ -107,28 +112,28 @@ class BPC301:
             print(f"Stage Moving Started: {start_time1}")
             for k in range(repeat_number):
                 position = self.origin
-                bcp301_record_time = time.perf_counter() - start_time
+                bcp303_record_time = time.perf_counter() - start_time
                 currentPosition = float(str(self.channel.GetPosition()))
-                self.bcp301_position[1] += [currentPosition]
-                self.bcp301_position[0] += [bcp301_record_time]
+                self.bcp303_position[1] += [currentPosition]
+                self.bcp303_position[0] += [bcp303_record_time]
                 for i in range(step_number):
                     position += step_size
                     self.channel.SetPosition(Decimal(position))
                     time.sleep(time_interval)
-                    bcp301_record_time = time.perf_counter() - start_time
+                    bcp303_record_time = time.perf_counter() - start_time
                     currentPosition = float(str(self.channel.GetPosition()))
-                    self.bcp301_position[1] += [currentPosition]
-                    self.bcp301_position[0] += [bcp301_record_time]
+                    self.bcp303_position[1] += [currentPosition]
+                    self.bcp303_position[0] += [bcp303_record_time]
                 # back
                 if self.back:
                     for i in range(step_number):
                         position -= step_size
                         self.channel.SetPosition(Decimal(position))
                         time.sleep(time_interval)
-                        bcp301_record_time = time.perf_counter() - start_time
+                        bcp303_record_time = time.perf_counter() - start_time
                         currentPosition = float(str(self.channel.GetPosition()))
-                        self.bcp301_position[1] += [currentPosition]
-                        self.bcp301_position[0] += [bcp301_record_time]
+                        self.bcp303_position[1] += [currentPosition]
+                        self.bcp303_position[0] += [bcp303_record_time]
                         # print(f"Current Position: {currentPosition}")
                 self.channel.SetPosition(Decimal(self.origin))
                 time.sleep(time_interval)
@@ -139,12 +144,12 @@ class BPC301:
             self.channel.StopPolling()
             self.device.Disconnect()
             print("Stage disconnected")
-            current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
-            save_data_to_csv(
-                f"./result/{formatted_time}_{MDT693_voltage}V/StageBCP301_data{current_date}_ss{step_size}_sn{step_number}_ti{time_interval}.csv",
-                self.bcp301_position,
-                titles=["Time", "Position(um)"],
-            )
+            # current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
+            # save_data_to_csv(
+            #     f"./result/{formatted_time}_{MDT693_voltage}V/Stagebcp303_data{current_date}_ss{step_size}_sn{step_number}_ti{time_interval}.csv",
+            #     self.bcp303_position,
+            #     titles=["Time", "Position(um)"],
+            # )
 
         except Exception as e:
             # Stop Polling and Disconnect.
@@ -156,15 +161,15 @@ class BPC301:
         # Uncomment this line if you are using Simulations
         # SimulationManager.Instance.UninitializeSimulations()
 
-    def bcp301_complete_work(self, bcp301_thread):
+    def bcp303_complete_work(self, bcp303_thread):
         # Wait for both threads to complete
-        bcp301_thread.join()
-        return self.bcp301_position
+        bcp303_thread.join()
+        return self.bcp303_position
 
 
 if __name__ == "__main__":
     current_time = datetime.now()
     formatted_time = current_time.strftime("%Y_%m_%d_%H_%M")
     os.makedirs(f"./result/{formatted_time}", exist_ok=True)
-    bcp301 = BPC301()
-    bcp301.bcp301_move_stage(formatted_time=formatted_time)
+    bcp303 = BPC303()
+    bcp303.bcp303_move_stage(formatted_time=formatted_time)
