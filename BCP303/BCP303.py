@@ -97,7 +97,7 @@ class BPC303:
     def move_to_origin(self):
         try:
             self.channel.SetPosition(Decimal(self.origin))
-            time.sleep(0.5)
+            time.sleep(1)
         except Exception as e:
             print(e)
 
@@ -105,24 +105,23 @@ class BPC303:
     def bcp303_move_stage(
         self,
         step_size=1,
-        time_interval=1,
+        current_position=0,
     ):
         # step_size in um, time_interval in seconds
         try:
-            currentPosition = float(str(self.channel.GetPosition()))
-            self.bcp303_position[1] += [currentPosition]
-            position += step_size
+            position = current_position + step_size
             self.channel.SetPosition(Decimal(position))
-            time.sleep(time_interval)
+            time.sleep(0.25)
             currentPosition = float(str(self.channel.GetPosition()))
-            time.sleep(time_interval)
             return currentPosition
         except Exception as e:
             print(e)
 
-    def bcp301_stop(self):
+    def bcp301_stop(self, ifback=True):
         try:
             print("Stage Moving Done")
+            if ifback:
+                self.move_to_origin()
             # Stop Polling and Disconnect.
             self.channel.StopPolling()
             self.device.Disconnect()

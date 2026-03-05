@@ -1,6 +1,6 @@
 from BCP303.BCP303 import BPC303
 from Sourcemeter.sourcemeter import Sourcemeter2401
-from tool.tools import plot_data, plot_data_stage
+from tool.tools import save_data_to_csv, saveSettings, avarage_voltage, plot_data
 import time
 from datetime import datetime
 import os
@@ -16,77 +16,71 @@ Operation process:
 """
 
 
-def operation(
-    repeat_number,
-    step_size,
-    step_number,
-    time_interval,
-    display_plt=True,
-):
+def operation(stage_setting):
+    repeat_number = stage_setting["repeat_number"]
+    step_size = stage_setting["step_size"]
+    step_number = stage_setting["step_number"]
+    time_interval = stage_setting["time_interval"]
     result = {"position": [], "voltage": []}
     try:
         # initialize the data logger
         bcp301 = BPC303()
-        sm2401 = Sourcemeter2401(speed_nplc=0.05)
-        formatted_time = datetime.now().strftime("%Y_%m_%d_%H_%M")
+        sm2401 = Sourcemeter2401(speed_nplc=0.1)
+        bcp301.move_to_origin()
+        position = 0
         for i in range(repeat_number):
-            for step in range(repeat_number):
+            for step in range(step_number):
                 step_start = time.perf_counter()
                 position = bcp301.bcp303_move_stage(
                     step_size=step_size,
-                    time_interval=time_interval,
-                    step_number=step_number,
+                    current_position=position,
                 )
                 result["position"].append(position)
-                time.sleep(0.25)
-                voltage = sm2401.measure_voltage(duration=time_interval / 2, dt=0.01)
+                voltage = sm2401.measure_voltage(duration=time_interval / 2, dt=0.01)[
+                    "voltage"
+                ]
                 result["voltage"].append(voltage)
                 # remaining time to wait until the next step
-
                 elapsed = time.perf_counter() - step_start
                 remaining = time_interval - elapsed
-
                 if remaining > 0:
                     time.sleep(remaining)
+        sm2401_settings = sm2401.getSettings()
+        settings = {"stage": setting, "sourcemeter": sm2401_settings}
         # stop the stage and sourcemeter
-        bcp301.bcp301_stop()
-        sm2401.close()
-        # save the data
-        os.makedirs(f"./result/{formatted_time}", exist_ok=True)
-        plot_data_stage(result, f"./result/{formatted_time}/data.png")
-        with open(f"./result/{formatted_time}/data.txt", "w") as f:
-            f.write(str(result))
     except Exception as e:
         print(f"Exception occurred: {e}")
+    finally:
+        time.sleep(0.5)
+        sm2401.close()
+        bcp301.bcp301_stop(ifback=True)
+        return result, settings
 
 
-# n = 19 # 18*0.25 = 4.5
-n = 2
-display_plt = False if n > 1 else True
-for i in range(n):
+if __name__ == "__main__":
     # Define default values for the stage movement
-    origin = 0
-    repeat_number = 1
-    step_size = 0.05
-    step_number = 2
-    time_interval = 1
-    running_time = repeat_number * step_number * time_interval
-    operation(
-        running_time,
-        origin,
-        repeat_number,
-        step_size,
-        step_number,
-        time_interval,
-        wafeform_settings,
-        display_plt,
+    setting = {
+        "repeat_number": 1,
+        "step_size": 0.1,
+        "step_number": 5,
+        "time_interval": 2,
+    }
+    result, config = operation(setting)
+    print(result)
+    print(config)
+    # save the data
+    chip_name = "chip1"
+    os.makedirs(f"./result/{chip_name}", exist_ok=True)
+    sample_name = "beam_test"
+    formatted_time = datetime.now().strftime("%Y%m%d%H%M")
+    file_path = f"./result/{chip_name}/{formatted_time}_{sample_name}"
+    os.makedirs(file_path, exist_ok=True)
+    suffix = f"{formatted_time}_{chip_name}_{sample_name}"
+    saveSettings(config, file_path, suffix=suffix)
+    save_data_to_csv(result, file_path, suffix=suffix)
+    avg_data = avarage_voltage(
+        result, ifsave_csv=True, save_dir=file_path, suffix=suffix
     )
-
-
-# # Define default values for the stage movement
-# origin = 3.8  # origin position of the stage
-# repeat_number = 1  # number of times the stage will move
-# step_size = 0.01  # step size in um
-# step_number = 200  # number of steps
-# time_interval = 1  # time interval in seconds
-# running_time = repeat_number * step_number * time_interval  # total running time
+    plot_data(
+        avg_data, show=True, file_path=os.path.join(file_path, f"{suffix}_plot.png")
+    )
