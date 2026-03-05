@@ -1,6 +1,5 @@
-from data.data_record import DataLogger
-from stage_control.BPC301 import BPC301
-from threading import Thread
+from BCP303.BCP303 import BPC303
+from Sourcemeter.sourcemeter import Sourcemeter2401
 from tool.tools import plot_data, plot_data_stage
 import time
 from datetime import datetime
@@ -8,116 +7,63 @@ import os
 
 """
 Operation process:
-1. Record moku/temperature data
-2. Start moving the stage
-3. Wait for the stage to complete the movement
-4. Stop the moku/temperature recording
+1. Initialize the Scourcemeter and BCP303 stage
+2. Start loop
+    a. Move the stage and record the position
+    b. Record the voltage data
+4. Stop recording
 5. Plot the data
 """
 
 
 def operation(
-    duration,
-    origin,
     repeat_number,
     step_size,
     step_number,
     time_interval,
-    wafeform_settings,
     display_plt=True,
 ):
+    result = {"position": [], "voltage": []}
     try:
         # initialize the data logger
-        dataLogger = DataLogger(duration=duration, disable_device=["MK2000"])
-        # initialize the stage controller
-        bcp301 = BPC301(origin=origin, back=False)
-        MDT693_voltage = wafeform_settings[0]["dc_level"]
-        dataLogger.moku_settings(
-            moku_sample_rate=10000,
-            mk2000_sample_rate=1,
-            waveform_settings=wafeform_settings,
-            channel_settings=[
-                {
-                    "channel": 1,
-                    "impedance": "50Ohm",
-                    "coupling": "DC",
-                    "range": "400mVpp",
-                },
-                # {"channel": 2, "impedance": "1MOhm", "coupling": "DC", "range": "4Vpp"},
-            ],
-        )
-        # Start time of the experiment
-        start_time = time.perf_counter()
-        current_time = datetime.now()
-        # Format the date and time as 'year_month_day_hour_min'
-        formatted_time = current_time.strftime("%Y_%m_%d_%H_%M")
-        os.makedirs(f"./result/{formatted_time}_{MDT693_voltage}V", exist_ok=True)
-        bcp301_stageThread = Thread(
-            target=bcp301.bcp301_move_stage,
-            args=(
-                repeat_number,
-                step_size,
-                step_number,
-                time_interval,
-                start_time,
-                formatted_time,
-                MDT693_voltage,
-            ),
-        )
-        # Record the moku and temperature data
-        moku_thread, temperature_thread = dataLogger.signal_record(
-            start_time, formatted_time
-        )
-        # Start the stage movement
-        bcp301_stageThread.start()
+        bcp301 = BPC303()
+        sm2401 = Sourcemeter2401(speed_nplc=0.05)
+        formatted_time = datetime.now().strftime("%Y_%m_%d_%H_%M")
+        for i in range(repeat_number):
+            for step in range(repeat_number):
+                step_start = time.perf_counter()
+                position = bcp301.bcp303_move_stage(
+                    step_size=step_size,
+                    time_interval=time_interval,
+                    step_number=step_number,
+                )
+                result["position"].append(position)
+                time.sleep(0.25)
+                voltage = sm2401.measure_voltage(duration=time_interval / 2, dt=0.01)
+                result["voltage"].append(voltage)
+                # remaining time to wait until the next step
 
-        # Wait for all threads to complete
-        bcp301_position = bcp301.bcp301_complete_work(bcp301_stageThread)
-        moku_file, temperatures = dataLogger.log_complete_work(
-            moku_thread, temperature_thread, formatted_time, MDT693_voltage
-        )
-        # Plot the data
-        # temperature included
-        if temperatures[0]:
-            plot_data(
-                moku_file,
-                moku_channels=[1],
-                temperatures=temperatures,
-                stagePositions=bcp301_position,
-                formatted_time=formatted_time,
-                step_size=step_size,
-            )
+                elapsed = time.perf_counter() - step_start
+                remaining = time_interval - elapsed
 
-        # temperature not included
-        if not temperatures[0]:
-            plot_data_stage(
-                moku_file,
-                moku_channels=[1],
-                stagePositions=bcp301_position,
-                formatted_time=formatted_time,
-                step_size=step_size,
-                MDT693_voltage=MDT693_voltage,
-                display_plt=display_plt,
-            )
-
+                if remaining > 0:
+                    time.sleep(remaining)
+        # stop the stage and sourcemeter
+        bcp301.bcp301_stop()
+        sm2401.close()
+        # save the data
+        os.makedirs(f"./result/{formatted_time}", exist_ok=True)
+        plot_data_stage(result, f"./result/{formatted_time}/data.png")
+        with open(f"./result/{formatted_time}/data.txt", "w") as f:
+            f.write(str(result))
     except Exception as e:
         print(f"Exception occurred: {e}")
 
-
-# Define default values for the waveform settings
-wafeform_settings = [
-    {
-        "channel": 1,
-        "type": "DC",
-        "dc_level": 0,
-    }
-]
 
 # n = 19 # 18*0.25 = 4.5
 n = 2
 display_plt = False if n > 1 else True
 for i in range(n):
-    wafeform_settings[0]["dc_level"] = i * 0.25
     # Define default values for the stage movement
     origin = 0
     repeat_number = 1
