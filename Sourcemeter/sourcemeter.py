@@ -51,22 +51,28 @@ class Sourcemeter2401:
         # Measurement speed: 0.1 NPLC (power line cycles)
         self.inst.write(f":SENS:VOLT:NPLC {speed_nplc}")
         self.inst.write(":OUTP ON")
-        self.results = {"time": [], "voltage": []}
 
         # measurement settings
 
     def measure_voltage(self, duration=2, dt=0.05):
+        results = {"time": [], "voltage": []}
+
         t0 = time.perf_counter()
         while True:
             v = float(self.inst.query(":MEAS:VOLT?"))
             t = time.perf_counter() - t0
-            self.results["time"].append(t)
-            self.results["voltage"].append(v)
+            results["time"].append(t)
+            results["voltage"].append(v)
             if t >= duration:
                 break
             time.sleep(dt)
+        # Measure only once
+        # v = float(self.inst.query(":MEAS:VOLT?"))
+        # t = time.perf_counter() - t0
+        # results["time"].append(t)
+        # results["voltage"].append(v)
         self.settings["measure"].append({"duration": duration, "dt": dt})
-        return self.results
+        return results
 
     def close(self):
         try:

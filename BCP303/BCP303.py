@@ -41,27 +41,29 @@ class BPC303:
         serial_no="71492464",
         origin=0,
         need_initialized=[True, True],
+        channel_id=1,
+        device=None,
         # self, serial_no="41845229", origin=0, back=False, need_initialized=[True, True]
     ):
         self.serial_no = serial_no
         self.origin = origin
-        self.device = None
-        self.channel = None
+        self.device = device
         self.need_initialized = need_initialized
-
+        self.channel_id = channel_id
         try:
-            # create new device.
-            self.device = BenchtopPiezo.CreateBenchtopPiezo(serial_no)
-            """The main entry point for the application"""
-            # Uncomment this line if you are using
-            SimulationManager.Instance.InitializeSimulations()
-            DeviceManagerCLI.BuildDeviceList()
+            if not device:
+                # create new device.
+                self.device = BenchtopPiezo.CreateBenchtopPiezo(serial_no)
+                """The main entry point for the application"""
+                # Uncomment this line if you are using
+                SimulationManager.Instance.InitializeSimulations()
+                DeviceManagerCLI.BuildDeviceList()
 
-            # Set output voltage.
-            voltage = 50
-            self.device.Connect(self.serial_no)
-            # Retrieve channel for the device. Can call multiple times for (X) channels.
-            channel = self.device.GetChannel(1)
+                # Set output voltage.
+                voltage = 50
+                self.device.Connect(self.serial_no)
+                # Retrieve channel for the device. Can call multiple times for (X) channels.
+            channel = self.device.GetChannel(self.channel_id)
             self.channel = channel
             # attributes = dir(channel)
             # print(attributes)
@@ -90,14 +92,16 @@ class BPC303:
             # Move the stage to the origin
             self.channel.SetPosition(Decimal(self.origin))
             time.sleep(0.5)
+            return self.device
 
         except Exception as e:
             print(e)
 
-    def move_to_origin(self):
+    def move_to_origin(self, start_position=0):
         try:
-            self.channel.SetPosition(Decimal(self.origin))
+            self.channel.SetPosition(Decimal(start_position))
             time.sleep(1)
+            return float(str(self.channel.GetPosition()))
         except Exception as e:
             print(e)
 
@@ -111,13 +115,13 @@ class BPC303:
         try:
             position = current_position + step_size
             self.channel.SetPosition(Decimal(position))
-            time.sleep(0.25)
+            time.sleep(0.5)
             currentPosition = float(str(self.channel.GetPosition()))
             return currentPosition
         except Exception as e:
             print(e)
 
-    def bcp301_stop(self, ifback=True):
+    def bcp303_stop(self, ifback=True):
         try:
             print("Stage Moving Done")
             if ifback:
@@ -139,6 +143,6 @@ if __name__ == "__main__":
     current_time = datetime.now()
     formatted_time = current_time.strftime("%Y_%m_%d_%H_%M")
     os.makedirs(f"./result/{formatted_time}", exist_ok=True)
-    bcp303 = BPC303()
-    bcp303.bcp303_move_stage(formatted_time=formatted_time)
-    bcp303.bcp301_stop()
+    bcp303 = BPC303(channel_id=2)
+    bcp303.bcp303_move_stage(step_size=1, current_position=0)
+    bcp303.bcp303_stop()
