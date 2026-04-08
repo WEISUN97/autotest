@@ -92,15 +92,13 @@ class BPC303:
             # Move the stage to the origin
             self.channel.SetPosition(Decimal(self.origin))
             time.sleep(0.5)
-            return self.device
-
         except Exception as e:
             print(e)
 
     def move_to_origin(self, start_position=0):
         try:
             self.channel.SetPosition(Decimal(start_position))
-            time.sleep(1)
+            time.sleep(2)
             return float(str(self.channel.GetPosition()))
         except Exception as e:
             print(e)
@@ -137,6 +135,9 @@ class BPC303:
             self.device.Disconnect()
             print("Stage disconnected")
             print(e)
+
+    def get_device(self):
+        return self.device
 
 
 if __name__ == "__main__":

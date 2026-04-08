@@ -18,54 +18,70 @@ Clockwise: away from samples, up
 """
 
 
-def operation(stage_setting):
-    repeat_number = stage_setting["repeat_number"]
-    step_size = stage_setting["step_size"]
-    step_number = stage_setting["step_number"]
-    time_interval = stage_setting["time_interval"]
-    start_position = stage_setting["start_position"]
-    step_size_z = stage_setting["step_size_z"]
-    result = {"position": [], "voltage": []}
+def operation(stage_settings):
+    repeat_number = stage_settings["repeat_number"]
+    step_size = stage_settings["step_size"]
+    step_number = stage_settings["step_number"]
+    time_interval = stage_settings["time_interval"]
+    start_position = stage_settings["start_position"]
+    step_size_z = stage_settings["step_size_z"]
+    total_steps = repeat_number * step_number
+    count = 1
+    formatted_time = datetime.now().strftime("%Y%m%d%H%M")
     try:
         # initialize the data logger
         # height controller
         bcp303_z = BPC303(channel_id=2)
-        bcp303_z.move_to_origin()
+        bcp303_device = bcp303_z.get_device()
         # moving controller
-        bcp303 = BPC303(channel_id=1)
+        bcp303 = BPC303(channel_id=1, device=bcp303_device)
+        # Sourcemeter
         sm2401 = Sourcemeter2401(speed_nplc=0.1)
-        bcp303.move_to_origin()
-        position = bcp303.move_to_origin(start_position=start_position)
+        position_z = bcp303_z.move_to_origin(
+            start_position=stage_settings["position_z"]
+        )
+        allData = [_ for _ in range(repeat_number)]
         for i in range(repeat_number):
+            allData[i] = {"position": [], "voltage": []}
+            bcp303.move_to_origin()
+            time.sleep(1)
             position_z = bcp303_z.bcp303_move_stage(
                 step_size=step_size_z,
                 current_position=position_z,
             )
+            time.sleep(1)
+            position = bcp303.move_to_origin(start_position=start_position)
+            time.sleep(1)
             for step in range(step_number):
                 step_start = time.perf_counter()
                 position = bcp303.bcp303_move_stage(
                     step_size=step_size,
                     current_position=position,
                 )
-                result["position"].append(position)
+                allData[i]["position"].append(position)
                 voltage = sm2401.measure_voltage(duration=time_interval / 4, dt=0.01)[
                     "voltage"
                 ]
-                result["voltage"].append(voltage)
+                allData[i]["voltage"].append(voltage)
                 # remaining time to wait until the next step
                 elapsed = time.perf_counter() - step_start
                 remaining = time_interval - elapsed
                 if remaining > 0:
                     time.sleep(remaining)
+                print(f"process completed: {100 * count / total_steps:.1f}%")
+                count += 1
             sm2401_settings = sm2401.getSettings()
-            settings = {"stage": setting, "sourcemeter": sm2401_settings}
+            stage_settings["position_z"] = position_z
+            settings = {"stage": stage_settings, "sourcemeter": sm2401_settings}
             post_process(
                 chip_name="chip_test",
                 sample_name="beam_test",
-                result=result,
+                result=allData[i],
                 config=settings,
                 repeat=repeat_number,
                 position_z=position_z,
+                ifshow=False,
+                formatted_time=formatted_time,
             )
         # stop the stage and sourcemeter
     except Exception as e:
@@ -73,18 +89,21 @@ def operation(stage_setting):
     finally:
         time.sleep(0.5)
         sm2401.close()
+        bcp303_z.move_to_origin()
+        bcp303_z.channel.StopPolling()
         bcp303.bcp303_stop(ifback=True)
-        return result, settings
+        return allData, settings
 
 
 if __name__ == "__main__":
     # Define default values for the stage movement
     setting = {
-        "start_position": 0,
-        "repeat_number": 1,
+        "start_position": 1,
         "step_size": 0.005,
-        "step_number": 500,
-        "time_interval": 2,
+        "step_number": 600,
         "step_size_z": 1,
+        "repeat_number": 5,
+        "position_z": 0,
+        "time_interval": 2,
     }
     operation(setting)

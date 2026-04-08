@@ -77,6 +77,7 @@ def avarage_voltage(data: dict, ifsave_csv=True, save_dir="", suffix=""):
 
 
 def plot_data(data, show=True, file_path=""):
+    plt.figure()
     offset = data["voltage"][0]
     data["voltage"] = [x - offset for x in data["voltage"]]
     data["voltage"] = [x * 1e3 for x in data["voltage"]]
@@ -89,6 +90,8 @@ def plot_data(data, show=True, file_path=""):
         plt.savefig(file_path, dpi=300)
     if show:
         plt.show()
+    else:
+        plt.close()
 
 
 def saveSettings(config, save_dir, suffix=""):
@@ -106,16 +109,16 @@ def post_process(
     position_z=None,
     repeat=None,
     ifshow=True,
+    formatted_time="",
 ):
-
     os.makedirs(f"./result/{chip_name}", exist_ok=True)
-    if repeat:
-        prefix = f"./result/{chip_name}/{sample_name}"
+    if repeat > 1:
+        prefix = f"./result/{chip_name}/{formatted_time}_{sample_name}"
         os.makedirs(f"{prefix}", exist_ok=True)
         sample_name = f"{sample_name}_z{position_z}"
     else:
+        ifshow = True
         prefix = f"./result/{chip_name}"
-    formatted_time = datetime.now().strftime("%Y%m%d%H%M")
     file_path = f"{prefix}/{formatted_time}_{sample_name}"
     os.makedirs(file_path, exist_ok=True)
     suffix = f"{formatted_time}_{chip_name}_{sample_name}"
