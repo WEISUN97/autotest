@@ -18,7 +18,11 @@ Clockwise: away from samples, up
 """
 
 
-def operation(stage_settings):
+def operation(
+    stage_settings=None,
+    chip_name="chip_test",
+    sample_name="beam_test",
+):
     repeat_number = stage_settings["repeat_number"]
     step_size = stage_settings["step_size"]
     step_number = stage_settings["step_number"]
@@ -45,10 +49,11 @@ def operation(stage_settings):
             allData[i] = {"position": [], "voltage": []}
             bcp303.move_to_origin()
             time.sleep(1)
-            position_z = bcp303_z.bcp303_move_stage(
-                step_size=step_size_z,
-                current_position=position_z,
-            )
+            if i > 0:
+                position_z = bcp303_z.bcp303_move_stage(
+                    step_size=step_size_z,
+                    current_position=position_z,
+                )
             time.sleep(1)
             position = bcp303.move_to_origin(start_position=start_position)
             time.sleep(1)
@@ -59,7 +64,7 @@ def operation(stage_settings):
                     current_position=position,
                 )
                 allData[i]["position"].append(position)
-                voltage = sm2401.measure_voltage(duration=time_interval / 4, dt=0.01)[
+                voltage = sm2401.measure_voltage(duration=time_interval / 2, dt=0.01)[
                     "voltage"
                 ]
                 allData[i]["voltage"].append(voltage)
@@ -74,8 +79,8 @@ def operation(stage_settings):
             stage_settings["position_z"] = position_z
             settings = {"stage": stage_settings, "sourcemeter": sm2401_settings}
             post_process(
-                chip_name="chip_test",
-                sample_name="beam_test",
+                chip_name=chip_name,
+                sample_name=sample_name,
                 result=allData[i],
                 config=settings,
                 repeat=repeat_number,
@@ -97,13 +102,26 @@ def operation(stage_settings):
 
 if __name__ == "__main__":
     # Define default values for the stage movement
-    setting = {
-        "start_position": 1,
-        "step_size": 0.005,
-        "step_number": 600,
+    setting_test = {
+        "start_position": 1.5,
+        "step_size": 0.05,
+        "step_number": 50,
         "step_size_z": 1,
-        "repeat_number": 5,
+        "repeat_number": 3,
         "position_z": 0,
         "time_interval": 2,
     }
-    operation(setting)
+    setting = {
+        "start_position": 1.5,
+        "step_size": 0.005,
+        "step_number": 400,
+        "step_size_z": 1,
+        "repeat_number": 3,
+        "position_z": 1,
+        "time_interval": 4,
+    }
+    operation(
+        stage_settings=setting,
+        chip_name="chip_test",
+        sample_name="beam_test_20_20",
+    )

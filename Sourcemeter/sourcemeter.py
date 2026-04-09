@@ -89,16 +89,16 @@ class Sourcemeter2401:
 if __name__ == "__main__":
     try:
         sm = Sourcemeter2401(speed_nplc=0.05)
-        data = sm.measure_voltage(duration=1, dt=0.01)
-        print(data)
+        data = sm.measure_voltage(duration=0.5, dt=0.01)
+        print(len(data["voltage"]))
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
         sm.close()
 
-    plt.plot(data["time"], data["voltage"])
-    plt.xlabel("Time (s)")
-    plt.ylabel("Voltage (V)")
-    plt.title("Voltage vs Time (Keithley 2401)")
-    plt.grid(True)
-    plt.show()
+    # plt.plot(data["time"], data["voltage"])
+    # plt.xlabel("Time (s)")
+    # plt.ylabel("Voltage (V)")
+    # plt.title("Voltage vs Time (Keithley 2401)")
+    # plt.grid(True)
+    # plt.show()
