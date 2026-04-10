@@ -103,9 +103,9 @@ def operation(
 if __name__ == "__main__":
     # Define default values for the stage movement
     setting_test = {
-        "start_position": 1.5,
-        "step_size": 0.05,
-        "step_number": 50,
+        "start_position": 0,
+        "step_size": 1,
+        "step_number": 10,
         "step_size_z": 1,
         "repeat_number": 3,
         "position_z": 0,
@@ -121,7 +121,7 @@ if __name__ == "__main__":
         "time_interval": 4,
     }
     operation(
-        stage_settings=setting,
+        stage_settings=setting_test,
         chip_name="chip_test",
-        sample_name="beam_test_20_20",
+        sample_name="beam_test_boundry",
     )
