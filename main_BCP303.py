@@ -57,6 +57,12 @@ def operation(
             time.sleep(1)
             position = bcp303.move_to_origin(start_position=start_position)
             time.sleep(1)
+            allData[i]["position"].append(position)
+            voltage = sm2401.measure_voltage(duration=time_interval / 2, dt=0.01)[
+                "voltage"
+            ]
+            allData[i]["voltage"].append(voltage)
+            time.sleep(1)
             for step in range(step_number):
                 step_start = time.perf_counter()
                 position = bcp303.bcp303_move_stage(
@@ -104,12 +110,12 @@ if __name__ == "__main__":
     # Define default values for the stage movement
     setting_test = {
         "start_position": 0,
-        "step_size": 1,
-        "step_number": 10,
+        "step_size": 0.5,
+        "step_number": 16,
         "step_size_z": 1,
-        "repeat_number": 3,
+        "repeat_number": 1,
         "position_z": 0,
-        "time_interval": 2,
+        "time_interval": 4,
     }
     setting = {
         "start_position": 1.5,
