@@ -99,32 +99,32 @@ class Sourcemeter2401:
 
 
 if __name__ == "__main__":
-    durastion_list = [1, 2, 5, 10, 60, 300]
-    try:
-        mean_list = {}
-        for i in range(len(durastion_list)):
-            duration = durastion_list[i]
-            mean_list[f"duration_{duration}s"] = []
-            for j in range(10):
-                speed_nplc = 0.1
-                dt = 0
-                formatted_time = datetime.now().strftime("%Y%m%d%H%M")
-                sm = Sourcemeter2401(speed_nplc=speed_nplc)
-                data = sm.measure_voltage(duration=duration, dt=dt)
-                volt_lists = data["voltage"]
-                mean_voltage = np.mean(volt_lists)
-                print(len(data["voltage"]))
-                print("Mean Voltage:", mean_voltage)
-                # sm.save_data_csv(
-                #     data,
-                #     f"./Sourcemeter/sourcemeter_data/sm_data_{speed_nplc}_{duration}s_{dt}s_{formatted_time}_mean{mean_voltage:.8f}.csv",
-                # )
-                mean_list[f"duration_{duration}s"].append(mean_voltage)
-        print(mean_list)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-    finally:
-        sm.close()
+    # durastion_list = [1, 2, 5, 10, 60, 300]
+    # try:
+    #     mean_list = {}
+    #     for i in range(len(durastion_list)):
+    #         duration = durastion_list[i]
+    #         mean_list[f"duration_{duration}s"] = []
+    #         for j in range(10):
+    #             speed_nplc = 0.1
+    #             dt = 0
+    #             formatted_time = datetime.now().strftime("%Y%m%d%H%M")
+    #             sm = Sourcemeter2401(speed_nplc=speed_nplc)
+    #             data = sm.measure_voltage(duration=duration, dt=dt)
+    #             volt_lists = data["voltage"]
+    #             mean_voltage = np.mean(volt_lists)
+    #             print(len(data["voltage"]))
+    #             print("Mean Voltage:", mean_voltage)
+    #             # sm.save_data_csv(
+    #             #     data,
+    #             #     f"./Sourcemeter/sourcemeter_data/sm_data_{speed_nplc}_{duration}s_{dt}s_{formatted_time}_mean{mean_voltage:.8f}.csv",
+    #             # )
+    #             mean_list[f"duration_{duration}s"].append(mean_voltage)
+    #     print(mean_list)
+    # except Exception as e:
+    #     print(f"An error occurred: {e}")
+    # finally:
+    #     sm.close()
 
     try:
         duration = 3600
@@ -136,7 +136,7 @@ if __name__ == "__main__":
         print(len(data["voltage"]))
         sm.save_data_csv(
             data,
-            f"./Sourcemeter/sourcemeter_data/sm_data_{speed_nplc}_{duration}s_{dt}s_{formatted_time}_mean{mean_voltage:.8f}.csv",
+            f"./Sourcemeter/sourcemeter_data/sm_data_{speed_nplc}_{duration}s_{dt}s_{formatted_time}_AFM2.csv",
         )
     except Exception as e:
         print(f"An error occurred: {e}")
