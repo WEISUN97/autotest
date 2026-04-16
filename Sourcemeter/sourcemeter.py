@@ -1,6 +1,9 @@
+from datetime import datetime
 import pyvisa
 import time
 import matplotlib.pyplot as plt
+import csv
+import numpy as np
 
 VISA_RESOURCE = "GPIB0::24::INSTR"
 TIMEOUT_MS = 5000
@@ -85,12 +88,56 @@ class Sourcemeter2401:
     def getSettings(self):
         return self.settings
 
+    def save_data_csv(self, data, file_path):
+
+        with open(file_path, "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["time", "voltage"])
+            for t, v in zip(data["time"], data["voltage"]):
+                writer.writerow([t, v])
+        print("Data saved to:", file_path)
+
 
 if __name__ == "__main__":
+    durastion_list = [1, 2, 5, 10, 60, 300]
     try:
-        sm = Sourcemeter2401(speed_nplc=0.05)
-        data = sm.measure_voltage(duration=0.5, dt=0.01)
+        mean_list = {}
+        for i in range(len(durastion_list)):
+            duration = durastion_list[i]
+            mean_list[f"duration_{duration}s"] = []
+            for j in range(10):
+                speed_nplc = 0.1
+                dt = 0
+                formatted_time = datetime.now().strftime("%Y%m%d%H%M")
+                sm = Sourcemeter2401(speed_nplc=speed_nplc)
+                data = sm.measure_voltage(duration=duration, dt=dt)
+                volt_lists = data["voltage"]
+                mean_voltage = np.mean(volt_lists)
+                print(len(data["voltage"]))
+                print("Mean Voltage:", mean_voltage)
+                # sm.save_data_csv(
+                #     data,
+                #     f"./Sourcemeter/sourcemeter_data/sm_data_{speed_nplc}_{duration}s_{dt}s_{formatted_time}_mean{mean_voltage:.8f}.csv",
+                # )
+                mean_list[f"duration_{duration}s"].append(mean_voltage)
+        print(mean_list)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        sm.close()
+
+    try:
+        duration = 3600
+        speed_nplc = 0.1
+        dt = 0
+        formatted_time = datetime.now().strftime("%Y%m%d%H%M")
+        sm = Sourcemeter2401(speed_nplc=speed_nplc)
+        data = sm.measure_voltage(duration=duration, dt=dt)
         print(len(data["voltage"]))
+        sm.save_data_csv(
+            data,
+            f"./Sourcemeter/sourcemeter_data/sm_data_{speed_nplc}_{duration}s_{dt}s_{formatted_time}_mean{mean_voltage:.8f}.csv",
+        )
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:

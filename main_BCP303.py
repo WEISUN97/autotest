@@ -110,12 +110,12 @@ if __name__ == "__main__":
     # Define default values for the stage movement
     setting_test = {
         "start_position": 0,
-        "step_size": 0.5,
-        "step_number": 16,
+        "step_size": 0,
+        "step_number": 1,
         "step_size_z": 1,
         "repeat_number": 1,
         "position_z": 0,
-        "time_interval": 4,
+        "time_interval": 4,  # duration = time_interval / 2
     }
     setting = {
         "start_position": 1.5,
@@ -128,6 +128,6 @@ if __name__ == "__main__":
     }
     operation(
         stage_settings=setting_test,
-        chip_name="chip_test",
-        sample_name="beam_test_boundry",
+        chip_name="noise_test",
+        sample_name="AFM_test",
     )
