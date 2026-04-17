@@ -136,7 +136,7 @@ if __name__ == "__main__":
         print(len(data["voltage"]))
         sm.save_data_csv(
             data,
-            f"./Sourcemeter/sourcemeter_data/sm_data_{speed_nplc}_{duration}s_{dt}s_{formatted_time}_AFM2.csv",
+            f"./Sourcemeter/sourcemeter_data/sm_data_{speed_nplc}_{duration}s_{dt}s_{formatted_time}_AFM2_2.csv",
         )
     except Exception as e:
         print(f"An error occurred: {e}")
