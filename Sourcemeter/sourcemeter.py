@@ -4,6 +4,15 @@ import time
 import matplotlib.pyplot as plt
 import csv
 import numpy as np
+import os
+import sys
+import threading
+import time
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)
+sys.path.append(project_root)
+from MK2000.MK2000 import MK2000
 
 VISA_RESOURCE = "GPIB0::24::INSTR"
 TIMEOUT_MS = 5000
@@ -98,7 +107,36 @@ class Sourcemeter2401:
         print("Data saved to:", file_path)
 
 
+def run_mk2000(duration, sample_rate, start_time, save_path):
+    global mk_result
+    mk2000 = MK2000(serial_port="COM4")
+    try:
+        mk_result = mk2000.mk2000_read_temperature(
+            duration=duration,
+            sample_rate=sample_rate,
+            start_time=start_time,
+            save_path=save_path,
+        )
+    finally:
+        mk2000.close_mk2000()
+
+
+def run_sourcemeter(duration, speed_nplc, dt, formatted_time, save_path):
+    global sm_result
+    sm = Sourcemeter2401(speed_nplc=speed_nplc)
+    try:
+        sm_result = sm.measure_voltage(duration=duration, dt=dt)
+        print(len(sm_result["voltage"]))
+        sm.save_data_csv(
+            sm_result,
+            f"{save_path}/sm_data_{speed_nplc}_{duration}s_{dt}s_{formatted_time}_AFM3_1.csv",
+        )
+    finally:
+        sm.close()
+
+
 if __name__ == "__main__":
+    pass
     # durastion_list = [1, 2, 5, 10, 60, 300]
     # try:
     #     mean_list = {}
@@ -125,22 +163,68 @@ if __name__ == "__main__":
     #     print(f"An error occurred: {e}")
     # finally:
     #     sm.close()
+    # try:
+    #     duration = 3600
+    #     speed_nplc = 0.1
+    #     dt = 0
+    #     formatted_time = datetime.now().strftime("%Y%m%d%H%M")
+    #     save_path = f"./Sourcemeter/sourcemeter_data/{formatted_time}_temperature"
+    #     mk2000 = MK2000(serial_port="COM4")
+    #     mk2000.mk2000_read_temperature(
+    #         duration=duration,
+    #         sample_rate=10,
+    #         start_time=time.perf_counter(),
+    #         save_path=save_path,
+    #     )
+    #     sm = Sourcemeter2401(speed_nplc=speed_nplc)
+    #     data = sm.measure_voltage(duration=duration, dt=dt)
+    #     print(len(data["voltage"]))
+    #     sm.save_data_csv(
+    #         data,
+    #         f"{save_path}/sm_data_{speed_nplc}_{duration}s_{dt}s_{formatted_time}_AFM3_1.csv",
+    #     )
+    # except Exception as e:
+    #     print(f"An error occurred: {e}")
+    # finally:
+    #     sm.close()
+
+if __name__ == "__main__":
+    # run both in parallel
+    mk_result = {}
+    sm_result = {}
+
     try:
-        duration = 3600
+        duration = 7200
         speed_nplc = 0.1
         dt = 0
+        sample_rate = 10
+
         formatted_time = datetime.now().strftime("%Y%m%d%H%M")
-        sm = Sourcemeter2401(speed_nplc=speed_nplc)
-        data = sm.measure_voltage(duration=duration, dt=dt)
-        print(len(data["voltage"]))
-        sm.save_data_csv(
-            data,
-            f"./Sourcemeter/sourcemeter_data/sm_data_{speed_nplc}_{duration}s_{dt}s_{formatted_time}_50Ohm.csv",
+        save_path = f"./Sourcemeter/sourcemeter_data/{formatted_time}_temperature"
+        os.makedirs(save_path, exist_ok=True)
+
+        start_time = time.perf_counter()
+
+        t1 = threading.Thread(
+            target=run_mk2000,
+            args=(duration, sample_rate, start_time, save_path),
         )
+
+        t2 = threading.Thread(
+            target=run_sourcemeter,
+            args=(duration, speed_nplc, dt, formatted_time, save_path),
+        )
+
+        t1.start()
+        t2.start()
+
+        t1.join()
+        t2.join()
+
+        print("Both measurements finished.")
+
     except Exception as e:
         print(f"An error occurred: {e}")
-    finally:
-        sm.close()
 
     # plt.plot(data["time"], data["voltage"])
     # plt.xlabel("Time (s)")

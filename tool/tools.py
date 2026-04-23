@@ -130,3 +130,29 @@ def post_process(
     plot_data(
         avg_data, show=ifshow, file_path=os.path.join(file_path, f"{suffix}_plot.png")
     )
+
+
+# Save data to a CSV file
+def save_temperature_to_csv(file_path, data, titles=["Time", "Value(°C)"]):
+    if not data or not data[0]:
+        raise ValueError("Data is empty, nothing to save")  # No data to save,
+    try:
+        # Transpose the data so that each inner list represents a column
+        transposed_data = list(zip(*data))
+
+        # Open the file in write mode
+        with open(file_path, mode="w", newline="") as file:
+            writer = csv.writer(file)
+
+            # Write the header if provided
+            if titles:
+                writer.writerow(titles)
+
+            # Write each row of transposed data
+            for row in transposed_data:
+                writer.writerow(row)
+
+        print(f"Data successfully saved to {file_path}")
+
+    except Exception as e:
+        print(f"An error occurred while saving data: {e}")
