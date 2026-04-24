@@ -182,7 +182,7 @@ if __name__ == "__main__":
     #     sm.save_data_csv(
     #         data,
     #         f"{save_path}/sm_data_{speed_nplc}_{duration}s_{dt}s_{formatted_time}_AFM3_1.csv",
-    #     )
+    #     )jjjjjjjjj
     # except Exception as e:
     #     print(f"An error occurred: {e}")
     # finally:
@@ -194,7 +194,7 @@ if __name__ == "__main__":
     sm_result = {}
 
     try:
-        duration = 7200
+        duration = 60
         speed_nplc = 0.1
         dt = 0
         sample_rate = 10
