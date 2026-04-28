@@ -111,9 +111,9 @@ if __name__ == "__main__":
     setting_test = {
         "start_position": 2,
         "step_size": 0.1,
-        "step_number": 20,
+        "step_number": 10,
         "step_size_z": 1,
-        "repeat_number": 7,
+        "repeat_number": 2,
         "position_z": 0,
         "time_interval": 2,  # duration = time_interval / 2
     }
@@ -128,6 +128,6 @@ if __name__ == "__main__":
     }
     operation(
         stage_settings=setting_test,
-        chip_name="stiff_boundry_test_1",
-        sample_name="boundry_2",
+        chip_name="V1_R_W_2_Right",
+        sample_name="test",
     )
