@@ -194,7 +194,7 @@ if __name__ == "__main__":
     sm_result = {}
 
     try:
-        duration = 60
+        duration = 7200
         speed_nplc = 0.1
         dt = 0
         sample_rate = 10
