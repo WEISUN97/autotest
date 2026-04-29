@@ -76,7 +76,26 @@ def avarage_voltage(data: dict, ifsave_csv=True, save_dir="", suffix=""):
     }
 
 
-def plot_data(data, show=True, file_path=""):
+def plot_data_origin(data, show=True, file_path=""):
+    plt.figure()
+    offset = data["voltage"][0]
+    data["voltage"] = [x - offset for x in data["voltage"]]
+    data["voltage"] = [x * 1e3 for x in data["voltage"]]
+    plt.plot(data["position"], data["voltage"])
+    plt.xlabel("Position (um)")
+    plt.ylabel("Voltage (mV)")
+    plt.title("Voltage vs Position")
+    plt.grid(True)
+    if file_path:
+        plt.savefig(file_path, dpi=300)
+    if show:
+        plt.show()
+    else:
+        plt.close()
+
+
+def plot_data_sample(data, show=True, file_path="", sensitivity=580):
+    # sensitivity: mV/um
     plt.figure()
     offset = data["voltage"][0]
     data["voltage"] = [x - offset for x in data["voltage"]]
@@ -108,7 +127,7 @@ def post_process(
     config=None,
     position_z=None,
     repeat=None,
-    ifshow=True,
+    ifshow=False,
     formatted_time="",
 ):
     os.makedirs(f"./result/{chip_name}", exist_ok=True)
@@ -127,7 +146,7 @@ def post_process(
     avg_data = avarage_voltage(
         result, ifsave_csv=True, save_dir=file_path, suffix=suffix
     )
-    plot_data(
+    plot_data_origin(
         avg_data, show=ifshow, file_path=os.path.join(file_path, f"{suffix}_plot.png")
     )
 
