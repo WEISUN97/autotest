@@ -110,8 +110,8 @@ if __name__ == "__main__":
     # Define default values for the stage movement
     setting_test = {
         "start_position": 0,
-        "step_size": 0.5,
-        "step_number": 6,
+        "step_size": 0.005,
+        "step_number": 200,
         "step_size_z": 1,
         "repeat_number": 1,
         "position_z": 0,
