@@ -109,11 +109,11 @@ def operation(
 if __name__ == "__main__":
     # Define default values for the stage movement
     setting_test = {
-        "start_position": 0,
+        "start_position": 1,
         "step_size": 0.005,
-        "step_number": 200,
+        "step_number": 300,
         "step_size_z": 1,
-        "repeat_number": 1,
+        "repeat_number": 3,
         "position_z": 0,
         "time_interval": 2,  # duration = time_interval / 2
     }
