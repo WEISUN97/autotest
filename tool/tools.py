@@ -76,11 +76,14 @@ def avarage_voltage(data: dict, ifsave_csv=True, save_dir="", suffix=""):
     }
 
 
-def plot_data_origin(data, show=True, file_path=""):
+def plot_data_origin(data, index=0, show=False, file_path=""):
     plt.figure()
-    offset = data["voltage"][0]
+    if index != None:
+        offset = np.mean(data["voltage"][0:index+1])
+    else:
+        offset = data["voltage"][0]
     data["voltage"] = [x - offset for x in data["voltage"]]
-    data["voltage"] = [x * 1e3 for x in data["voltage"]]
+    data["voltage"] = [x  for x in data["voltage"]]
     plt.plot(data["position"], data["voltage"])
     plt.xlabel("Position (um)")
     plt.ylabel("Voltage (mV)")
@@ -94,16 +97,68 @@ def plot_data_origin(data, show=True, file_path=""):
         plt.close()
 
 
-def plot_data_sample(data, show=True, file_path="", sensitivity=580):
-    # sensitivity: mV/um
+import numpy as np
+
+def find_last_zero_before_valid(x, y, zero_tol=0.3, valid_thresh=1.0, sustain=2, baseline_n=2):
+    """
+    unit mV, um
+    zero_tol : float
+        Tolerance for defining a near-zero point, i.e. abs(y) <= zero_tol.
+    valid_thresh : float
+        Threshold for defining valid data, i.e. y >= valid_thresh.
+    sustain : int
+        Number of consecutive points required to confirm valid data starts.
+
+    Returns
+    -------
+    idx : int or None
+        Index of the last zero point before valid data starts.
+    x0 : float or None
+        x value of that point.
+    y0 : float or None
+        y value of that point.
+    """
+    x = np.asarray(x)
+    y = np.asarray(y)*1e3  # convert to mV
+    baseline = np.mean(y[:baseline_n])
+    n = len(y)
+    if len(x) != n:
+        raise ValueError("x and y must have the same length")
+
+    # Find the first sustained valid region
+    start_valid = None
+    for i in range(n - sustain + 1):
+        if np.all(y[i:i+sustain] >= valid_thresh + baseline):
+            start_valid = i
+            break
+
+    if start_valid is None:
+        return None, None, None
+
+    # Search backward for the last near-zero point before valid region
+    for j in range(start_valid - 1, -1, -1):
+        if abs(y[j]) <= zero_tol + baseline:
+            print(f"Found zero point at index {j}, position={x[j]}, voltage={y[j]}")
+            return j, x[j], y[j]
+    return None, None, None
+
+def plot_data_sample(data, index=0, show=True, file_path="", sensitivity=580, stiffness=8.8*1e-6):
+    # sensitivity: mV/um, stiffness: N/um, so force = stiffness * position_sample, voltage: mV
     plt.figure()
-    offset = data["voltage"][0]
+    if index != None:
+        offset = np.mean(data["voltage"][0:index+1])
+    else:
+        offset = data["voltage"][0]    
     data["voltage"] = [x - offset for x in data["voltage"]]
-    data["voltage"] = [x * 1e3 for x in data["voltage"]]
-    plt.plot(data["position"], data["voltage"])
-    plt.xlabel("Position (um)")
-    plt.ylabel("Voltage (mV)")
-    plt.title("Voltage vs Position")
+    # x_AFM: displacement of AFM tip
+    position_AFM = [x / sensitivity for x in data["voltage"]]
+    # x_sample = x_stage - x_AFM
+    data["position_sample"] = [x - y for x, y in zip(data["position"], position_AFM)]
+    data['force_sample'] = [x * stiffness*1e3 for x in data["position_sample"]]  # convert to mN
+    plt.plot(data["position_sample"][index:], data["force_sample"][index:])
+    plt.xlabel("Displacement (um)")
+    plt.ylabel("Force (mN)")
+    plt.title("Force vs Displacement")
     plt.grid(True)
     if file_path:
         plt.savefig(file_path, dpi=300)
@@ -146,8 +201,13 @@ def post_process(
     avg_data = avarage_voltage(
         result, ifsave_csv=True, save_dir=file_path, suffix=suffix
     )
+    avg_data["voltage"] = [x * 1e3 for x in avg_data["voltage"]]  # convert to mV
+    index = find_last_zero_before_valid(avg_data["position"], avg_data["voltage"], zero_tol=0.5, valid_thresh=1.0, sustain=3)[0]
     plot_data_origin(
-        avg_data, show=ifshow, file_path=os.path.join(file_path, f"{suffix}_plot.png")
+        avg_data, index=index, show=False, file_path=os.path.join(file_path, f"{suffix}_origin_plot.png")
+    )
+    plot_data_sample(
+        avg_data, index=index, show=ifshow, file_path=os.path.join(file_path, f"{suffix}_sample_plot.png")
     )
 
 

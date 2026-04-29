@@ -13,3 +13,6 @@ a. Select the lowest source range and set the source level to zero
 (0.00000µA or 000.000mV).
 b. Set compliance to a level that is higher than the expected measurement.
 """
+
+# install dependencies
+'& "C:/Users/cnmuser/Desktop/Non-hookean/autotest/.conda/python.exe" -m pip list'
