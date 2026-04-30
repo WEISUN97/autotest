@@ -149,7 +149,8 @@ def find_last_zero_before_valid(
 def plot_data_sample(
     data, index=0, show=True, file_path="", sensitivity=580, stiffness=8.8 * 1e-6
 ):
-    # sensitivity: mV/um, stiffness: N/um, so force = stiffness * position_sample, voltage: mV
+    # sensitivity: mV/um, stiffness: N/um, so force = stiffness * position_sample
+    # voltage: V， need to convert to mV, position: um
     plt.figure()
     if index != None:
         # offset = np.mean(data["voltage"][0 : index + 1])
@@ -158,7 +159,7 @@ def plot_data_sample(
         offset = data["voltage"][0]
     data["voltage"] = [x - offset for x in data["voltage"]]
     # x_AFM: displacement of AFM tip
-    position_AFM = [x / sensitivity for x in data["voltage"]]
+    position_AFM = [x * 1000 / sensitivity for x in data["voltage"]]
     pos_offset = data["position"][index]
     data["position"] = [x - pos_offset for x in data["position"]]
     # x_sample = x_stage - x_AFM
