@@ -163,9 +163,7 @@ def plot_data_sample(
     data["position"] = [x - pos_offset for x in data["position"]]
     # x_sample = x_stage - x_AFM
     data["position_sample"] = [x - y for x, y in zip(data["position"], position_AFM)]
-    data["force_sample"] = [
-        x * stiffness * 1e3 for x in data["position_sample"]
-    ]  # convert to mN
+    data["force_sample"] = [x * stiffness * 1e3 for x in position_AFM]  # convert to mN
     print(f"position_sample: {data['position_sample'][index:index+5]}")
     print(f"force_sample: {data['force_sample'][index:index+5]}")
     plt.plot(data["position_sample"][index:], data["force_sample"][index:])

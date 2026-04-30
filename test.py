@@ -66,9 +66,7 @@ def plot_data_sample(
     data["position"] = [x - pos_offset for x in data["position"]]
     # x_sample = x_stage - x_AFM
     data["position_sample"] = [x - y for x, y in zip(data["position"], position_AFM)]
-    data["force_sample"] = [
-        x * stiffness * 1e3 for x in data["position_sample"]
-    ]  # convert to mN
+    data["force_sample"] = [x * stiffness * 1e3 for x in position_AFM]  # convert to mN
     print(f"position_sample: {data['position_sample'][index:index+5]}")
     print(f"force_sample: {data['force_sample'][index:index+5]}")
     plt.plot(data["position_sample"][index:], data["force_sample"][index:])
@@ -85,7 +83,7 @@ def plot_data_sample(
 
 
 # ===== Read data from CSV =====
-csv_file = "/Users/bubble/Desktop/Project/Buckling/autotest/result/V1_R_W_2_Right/202604291741_test_1_left/202604291741_test_1_left_z-0.00205999938962981/202604291741_V1_R_W_2_Right_test_1_left_z-0.00205999938962981_signal_mean.csv"  # replace with your file name
+csv_file = r"C:\Users\cnmuser\Desktop\Non-hookean\autotest\result\V1_R_W_2_Right\202604301306_test_1_left\202604301306_V1_R_W_2_Right_test_1_left_signal_mean.csv"  # replace with your file name
 df = pd.read_csv(csv_file)
 
 print("CSV headers:", df.columns.tolist())
