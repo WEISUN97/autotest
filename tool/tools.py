@@ -1,9 +1,11 @@
 import csv
 import json
+from turtle import pd
 import matplotlib.pyplot as plt
 import os
 import numpy as np
 from datetime import datetime
+import pandas as pd
 
 
 def save_data_to_csv(data: dict, save_dir: str, suffix=""):
@@ -104,7 +106,6 @@ def find_last_zero_before_valid(
     x, y, zero_tol=0.3, valid_thresh=1.0, sustain=2, baseline_n=2
 ):
     """
-    unit mV, um
     zero_tol : float
         Tolerance for defining a near-zero point, i.e. abs(y) <= zero_tol.
     valid_thresh : float
@@ -122,7 +123,7 @@ def find_last_zero_before_valid(
         y value of that point.
     """
     x = np.asarray(x)
-    y = np.asarray(y) * 1e3  # convert to mV
+    y = np.asarray(y)
     baseline = np.mean(y[:baseline_n])
     n = len(y)
     if len(x) != n:
@@ -143,14 +144,14 @@ def find_last_zero_before_valid(
         if abs(y[j]) <= zero_tol + baseline:
             print(f"Found zero point at index {j}, position={x[j]}, voltage={y[j]}")
             return j, x[j], y[j]
+
     return None, None, None
 
 
 def plot_data_sample(
     data, index=0, show=True, file_path="", sensitivity=580, stiffness=8.8 * 1e-6
 ):
-    # sensitivity: mV/um, stiffness: N/um, so force = stiffness * position_sample
-    # voltage: V， need to convert to mV, position: um
+    # sensitivity: mV/um, stiffness: N/um, so force = stiffness * position_sample, voltage: mV
     plt.figure()
     if index != None:
         # offset = np.mean(data["voltage"][0 : index + 1])
@@ -159,14 +160,12 @@ def plot_data_sample(
         offset = data["voltage"][0]
     data["voltage"] = [x - offset for x in data["voltage"]]
     # x_AFM: displacement of AFM tip
-    position_AFM = [x * 1000 / sensitivity for x in data["voltage"]]
+    position_AFM = [x / sensitivity for x in data["voltage"]]
     pos_offset = data["position"][index]
     data["position"] = [x - pos_offset for x in data["position"]]
     # x_sample = x_stage - x_AFM
     data["position_sample"] = [x - y for x, y in zip(data["position"], position_AFM)]
     data["force_sample"] = [x * stiffness * 1e3 for x in position_AFM]  # convert to mN
-    print(f"position_sample: {data['position_sample'][index:index+5]}")
-    print(f"force_sample: {data['force_sample'][index:index+5]}")
     plt.plot(data["position_sample"][index:], data["force_sample"][index:])
     plt.xlabel("Displacement (um)")
     plt.ylabel("Force (mN)")
@@ -209,7 +208,7 @@ def post_process(
     os.makedirs(file_path, exist_ok=True)
     suffix = f"{formatted_time}_{chip_name}_{sample_name}"
     saveSettings(config, file_path, suffix=suffix)
-    save_data_to_csv(result, file_path, suffix=suffix)
+    path = save_data_to_csv(result, file_path, suffix=suffix)
     avg_data = avarage_voltage(
         result, ifsave_csv=True, save_dir=file_path, suffix=suffix
     )
@@ -220,9 +219,11 @@ def post_process(
         zero_tol=0.5,
         valid_thresh=1.0,
         sustain=3,
+        baseline_n=2,
     )[0]
+    data1 = avg_data.copy()
     plot_data_origin(
-        avg_data,
+        data1,
         index=index,
         show=False,
         file_path=os.path.join(file_path, f"{suffix}_origin_plot.png"),

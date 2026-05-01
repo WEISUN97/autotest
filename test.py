@@ -83,7 +83,7 @@ def plot_data_sample(
 
 
 # ===== Read data from CSV =====
-csv_file = "/Users/bubble/Desktop/Project/Buckling/autotest/result/V1_R_W_2_Right/202604301252_test_1_left/202604301252_V1_R_W_2_Right_test_1_left_signal_mean.csv"  # replace with your file name
+csv_file = r"C:\Users\cnmuser\Desktop\Non-hookean\autotest\result\V1_R_W_2_Right\202604301656_test_1_left\202604301656_V1_R_W_2_Right_test_1_left_signal_mean.csv"  # replace with your file name
 df = pd.read_csv(csv_file)
 
 print("CSV headers:", df.columns.tolist())
