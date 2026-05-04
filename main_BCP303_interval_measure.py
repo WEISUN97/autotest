@@ -110,25 +110,25 @@ def operation(
 if __name__ == "__main__":
     # Define default values for the stage movement
     setting_test = {
-        "start_position": 1.5,
+        "start_position": 0,
         "step_size": 0.1,
-        "step_number": 25,
+        "step_number": 30,
         "step_size_z": 1,
         "repeat_number": 1,
         "position_z": 0,
         "time_interval": 2,  # duration = time_interval / 2
     }
     setting = {
-        "start_position": 1.5,
+        "start_position": 0,
         "step_size": 0.005,
-        "step_number": 500,
+        "step_number": 400,
         "step_size_z": 1,
-        "repeat_number": 3,
+        "repeat_number": 5,
         "position_z": 0,
         "time_interval": 2,  # duration = time_interval / 2
     }
     operation(
         stage_settings=setting,
         chip_name="V1_R_W_2_Right",
-        sample_name="w5_3",  # test_1_left2, test_1_left, test_1, w=10
+        sample_name="w15_3",  # test_1_left2, test_1_left, test_1, w=10
     )
