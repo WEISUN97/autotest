@@ -202,14 +202,11 @@ if __name__ == "__main__":
         formatted_time = datetime.now().strftime("%Y%m%d%H%M")
         save_path = f"./Sourcemeter/sourcemeter_data/{formatted_time}_temperature"
         os.makedirs(save_path, exist_ok=True)
-
         start_time = time.perf_counter()
-
         t1 = threading.Thread(
             target=run_mk2000,
             args=(duration, sample_rate, start_time, save_path),
         )
-
         t2 = threading.Thread(
             target=run_sourcemeter,
             args=(duration, speed_nplc, dt, formatted_time, save_path),
