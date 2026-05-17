@@ -16,3 +16,8 @@ b. Set compliance to a level that is higher than the expected measurement.
 
 # install dependencies
 '& "C:/Users/cnmuser/Desktop/Non-hookean/autotest/.conda/python.exe" -m pip list'
+
+# AFM
+# AFM1: 4v base
+# AFM2: 0.8v base
+# AFM3: 0.27v base

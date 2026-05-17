@@ -1,0 +1,65 @@
+{
+    "stage": {
+        "start_position": 0,
+        "step_size": 1,
+        "step_number": 8,
+        "step_size_z": 1,
+        "repeat_number": 1,
+        "position_z": -0.00549333170567949,
+        "time_interval": 4
+    },
+    "sourcemeter": {
+        "init": [
+            ":ROUT:TERM FRONT",
+            "*RST",
+            ":SOUR:FUNC CURR",
+            ":SOUR:CURR:MODE FIXED",
+            ":SOUR:CURR:RANG MIN",
+            ":SOUR:CURR:LEV 0",
+            ":SENS:FUNC \"VOLT\"",
+            ":SENS:VOLT:RANG 20",
+            ":SENS:VOLT:PROT 20",
+            ":FORM:ELEM VOLT",
+            ":SENS:VOLT:NPLC 0.1",
+            ":OUTP ON"
+        ],
+        "measure": [
+            {
+                "duration": 2.0,
+                "dt": 0.01
+            },
+            {
+                "duration": 2.0,
+                "dt": 0.01
+            },
+            {
+                "duration": 2.0,
+                "dt": 0.01
+            },
+            {
+                "duration": 2.0,
+                "dt": 0.01
+            },
+            {
+                "duration": 2.0,
+                "dt": 0.01
+            },
+            {
+                "duration": 2.0,
+                "dt": 0.01
+            },
+            {
+                "duration": 2.0,
+                "dt": 0.01
+            },
+            {
+                "duration": 2.0,
+                "dt": 0.01
+            },
+            {
+                "duration": 2.0,
+                "dt": 0.01
+            }
+        ]
+    }
+}

@@ -12,6 +12,7 @@ from datetime import datetime
 import os
 import time
 import sys
+import numpy as np
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 # from tool.tools import save_data_to_csv
@@ -92,6 +93,18 @@ class BPC303:
             # Move the stage to the origin
             self.channel.SetPosition(Decimal(self.origin))
             time.sleep(0.5)
+        except Exception as e:
+            print(e)
+
+    def move_to_position(self, start_position=0, step_size=0.1, final_position=1):
+        try:
+            all_position = np.arange(
+                start_position, final_position + step_size, step_size
+            )
+            for position in all_position:
+                self.channel.SetPosition(Decimal(position))
+                time.sleep(0.5)
+            return float(str(self.channel.GetPosition()))
         except Exception as e:
             print(e)
 
