@@ -110,8 +110,8 @@ if __name__ == "__main__":
     # Define default values for the stage movement
     setting_test = {
         "start_position": 0,
-        "step_size": 0.1,
-        "step_number": 50,
+        "step_size": 1,
+        "step_number": 5,
         "step_size_z": 1,
         "repeat_number": 1,
         "position_z": 0,
@@ -128,6 +128,6 @@ if __name__ == "__main__":
     }
     operation(
         stage_settings=setting_test,
-        chip_name="V1_R_W_2_Right",
-        sample_name="test_AFM3_W15",  # test_1_left2, test_1_left, test_1, w=10
+        chip_name="stiff_boundry_test_1",
+        sample_name="test_AFM4_300",  # test_1_left2, test_1_left, test_1, w=10
     )
