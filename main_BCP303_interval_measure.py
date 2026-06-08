@@ -35,10 +35,10 @@ def operation(
     try:
         # initialize the data logger
         # height controller
-        bcp303_z = BPC303(channel_id=2)
+        bcp303_z = BPC303(channel_id=1)
         bcp303_device = bcp303_z.get_device()
         # moving controller
-        bcp303 = BPC303(channel_id=1, device=bcp303_device)
+        bcp303 = BPC303(channel_id=2, device=bcp303_device)
         # Sourcemeter
         sm2401 = Sourcemeter2401(speed_nplc=0.1)
         position_z = bcp303_z.move_to_origin(

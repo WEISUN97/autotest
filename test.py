@@ -1,4 +1,4 @@
-import numpy as np
+from tool.git_update import git_update
+import os
 
-all_position = np.arange(0, 1 + 0.1, 0.1)
-print(all_position)
+git_update(commit_message="update test.py")

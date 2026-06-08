@@ -136,59 +136,6 @@ def run_sourcemeter(duration, speed_nplc, dt, formatted_time, save_path):
 
 
 if __name__ == "__main__":
-    pass
-    # durastion_list = [1, 2, 5, 10, 60, 300]
-    # try:
-    #     mean_list = {}
-    #     for i in range(len(durastion_list)):
-    #         duration = durastion_list[i]
-    #         mean_list[f"duration_{duration}s"] = []
-    #         for j in range(10):
-    #             speed_nplc = 0.1
-    #             dt = 0
-    #             formatted_time = datetime.now().strftime("%Y%m%d%H%M")
-    #             sm = Sourcemeter2401(speed_nplc=speed_nplc)
-    #             data = sm.measure_voltage(duration=duration, dt=dt)
-    #             volt_lists = data["voltage"]
-    #             mean_voltage = np.mean(volt_lists)
-    #             print(len(data["voltage"]))
-    #             print("Mean Voltage:", mean_voltage)
-    #             # sm.save_data_csv(
-    #             #     data,
-    #             #     f"./Sourcemeter/sourcemeter_data/sm_data_{speed_nplc}_{duration}s_{dt}s_{formatted_time}_mean{mean_voltage:.8f}.csv",
-    #             # )
-    #             mean_list[f"duration_{duration}s"].append(mean_voltage)
-    #     print(mean_list)
-    # except Exception as e:
-    #     print(f"An error occurred: {e}")
-    # finally:
-    #     sm.close()
-    # try:
-    #     duration = 3600
-    #     speed_nplc = 0.1
-    #     dt = 0
-    #     formatted_time = datetime.now().strftime("%Y%m%d%H%M")
-    #     save_path = f"./Sourcemeter/sourcemeter_data/{formatted_time}_temperature"
-    #     mk2000 = MK2000(serial_port="COM4")
-    #     mk2000.mk2000_read_temperature(
-    #         duration=duration,
-    #         sample_rate=10,
-    #         start_time=time.perf_counter(),
-    #         save_path=save_path,
-    #     )
-    #     sm = Sourcemeter2401(speed_nplc=speed_nplc)
-    #     data = sm.measure_voltage(duration=duration, dt=dt)
-    #     print(len(data["voltage"]))
-    #     sm.save_data_csv(
-    #         data,
-    #         f"{save_path}/sm_data_{speed_nplc}_{duration}s_{dt}s_{formatted_time}_AFM3_1.csv",
-    #     )jjjjjjjjj
-    # except Exception as e:
-    #     print(f"An error occurred: {e}")
-    # finally:
-    #     sm.close()
-
-if __name__ == "__main__":
     # run both in parallel
     mk_result = {}
     sm_result = {}
