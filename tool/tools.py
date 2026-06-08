@@ -194,6 +194,7 @@ def post_process(
     position_z=None,
     repeat=None,
     ifshow=False,
+    show_signal=False,
     formatted_time="",
 ):
     os.makedirs(f"./result/{chip_name}", exist_ok=True)
@@ -222,10 +223,12 @@ def post_process(
         baseline_n=2,
     )[0]
     data1 = avg_data.copy()
+    if ifshow:
+        show_signal = False
     plot_data_origin(
         data1,
         index=index,
-        show=False,
+        show=show_signal,
         file_path=os.path.join(file_path, f"{suffix}_origin_plot.png"),
     )
     plot_data_sample(

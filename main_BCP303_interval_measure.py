@@ -3,6 +3,7 @@ from Sourcemeter.sourcemeter import Sourcemeter2401
 from tool.tools import post_process
 import time
 from datetime import datetime
+from tool.git_update import git_update
 
 """
 Operation process:
@@ -22,6 +23,10 @@ def operation(
     stage_settings=None,
     chip_name="chip_test",
     sample_name="beam_test",
+    ifshow=False,
+    show_signal=False,
+    ifupdate_git=False,
+    commit_message="",
 ):
     repeat_number = stage_settings["repeat_number"]
     step_size = stage_settings["step_size"]
@@ -91,7 +96,8 @@ def operation(
                 config=settings,
                 repeat=repeat_number,
                 position_z=position_z,
-                ifshow=False,
+                ifshow=ifshow,
+                show_signal=show_signal,
                 formatted_time=formatted_time,
             )
         # stop the stage and sourcemeter
@@ -103,15 +109,17 @@ def operation(
         bcp303_z.move_to_origin()
         bcp303_z.channel.StopPolling()
         bcp303.bcp303_stop(ifback=True)
+        if ifupdate_git:
+            git_update(commit_message=commit_message)
         return allData, settings
 
 
 if __name__ == "__main__":
     # Define default values for the stage movement
     setting_test = {
-        "start_position": 0,
-        "step_size": 1,
-        "step_number": 5,
+        "start_position": 0.5,
+        "step_size": 0.05,
+        "step_number": 50,
         "step_size_z": 1,
         "repeat_number": 1,
         "position_z": 0,
@@ -129,5 +137,9 @@ if __name__ == "__main__":
     operation(
         stage_settings=setting_test,
         chip_name="stiff_boundry_test_1",
-        sample_name="test_AFM4_300",  # test_1_left2, test_1_left, test_1, w=10
+        sample_name="test_AFM3_450_boundary_2",  # test_1_left2, test_1_left, test_1, w=10
+        ifshow=False,  # if show F-X curve
+        show_signal=True,  # if show voltage signal (if show F-X, show_signal will be set to False automatically)
+        ifupdate_git=True,  # if update git after measurement
+        commit_message="boundary test",  # git commit message
     )
