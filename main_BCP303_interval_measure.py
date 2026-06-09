@@ -117,11 +117,11 @@ def operation(
 if __name__ == "__main__":
     # Define default values for the stage movement
     setting_test = {
-        "start_position": 0.5,
+        "start_position": 1,
         "step_size": 0.05,
-        "step_number": 50,
+        "step_number": 60,
         "step_size_z": 1,
-        "repeat_number": 1,
+        "repeat_number": 3,
         "position_z": 0,
         "time_interval": 2,  # duration = time_interval / 2
     }
@@ -136,10 +136,10 @@ if __name__ == "__main__":
     }
     operation(
         stage_settings=setting_test,
-        chip_name="stiff_boundry_test_1",
-        sample_name="test_AFM3_450_boundary_2",  # test_1_left2, test_1_left, test_1, w=10
+        chip_name="V1_R_W_2_Right",
+        sample_name="test_AFM3_450_w10_test",  # test_1_left2, test_1_left, test_1, w=10
         ifshow=False,  # if show F-X curve
-        show_signal=True,  # if show voltage signal (if show F-X, show_signal will be set to False automatically)
-        ifupdate_git=True,  # if update git after measurement
-        commit_message="boundary test",  # git commit message
+        show_signal=False,  # if show voltage signal (if show F-X, show_signal will be set to False automatically)
+        ifupdate_git=False,  # if update git after measurement
+        commit_message="sample test",  # git commit message
     )

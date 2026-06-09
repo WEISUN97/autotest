@@ -149,7 +149,7 @@ def find_last_zero_before_valid(
 
 
 def plot_data_sample(
-    data, index=0, show=True, file_path="", sensitivity=580, stiffness=8.8 * 1e-6
+    data, index=0, show=False, file_path="", sensitivity=180, stiffness=8.8 * 1e-6
 ):
     # sensitivity: mV/um, stiffness: N/um, so force = stiffness * position_sample, voltage: mV
     plt.figure()
@@ -199,11 +199,11 @@ def post_process(
 ):
     os.makedirs(f"./result/{chip_name}", exist_ok=True)
     if repeat > 1:
+        ifshow = False
         prefix = f"./result/{chip_name}/{formatted_time}_{sample_name}"
         os.makedirs(f"{prefix}", exist_ok=True)
         sample_name = f"{sample_name}_z{position_z}"
     else:
-        ifshow = True
         prefix = f"./result/{chip_name}"
     file_path = f"{prefix}/{formatted_time}_{sample_name}"
     os.makedirs(file_path, exist_ok=True)
