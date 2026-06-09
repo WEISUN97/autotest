@@ -117,12 +117,12 @@ def operation(
 if __name__ == "__main__":
     # Define default values for the stage movement
     setting_test = {
-        "start_position": 1,
-        "step_size": 0.05,
+        "start_position": 0,
+        "step_size": 0.1,
         "step_number": 60,
-        "step_size_z": 1,
-        "repeat_number": 3,
-        "position_z": 0,
+        "step_size_z": 0,
+        "repeat_number": 5,
+        "position_z": 8,
         "time_interval": 2,  # duration = time_interval / 2
     }
     setting = {
@@ -137,7 +137,7 @@ if __name__ == "__main__":
     operation(
         stage_settings=setting_test,
         chip_name="V1_R_W_2_Right",
-        sample_name="test_AFM3_450_w10_test",  # test_1_left2, test_1_left, test_1, w=10
+        sample_name="test_AFM3_450_w20_test",  # test_1_left2, test_1_left, test_1, w=10
         ifshow=False,  # if show F-X curve
         show_signal=False,  # if show voltage signal (if show F-X, show_signal will be set to False automatically)
         ifupdate_git=False,  # if update git after measurement
