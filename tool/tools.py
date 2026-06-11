@@ -79,6 +79,9 @@ def avarage_voltage(data: dict, ifsave_csv=True, save_dir="", suffix=""):
 
 
 def plot_data_origin(data, index=0, show=False, file_path=""):
+    if index is None:
+        print("Warning: index is None. Use index = 0 for sample plot.")
+        index = 0
     plt.figure()
     if index != None:
         offset = np.mean(data["voltage"][0 : index + 1])
@@ -151,6 +154,9 @@ def find_last_zero_before_valid(
 def plot_data_sample(
     data, index=0, show=False, file_path="", sensitivity=180, stiffness=8.8 * 1e-6
 ):
+    if index is None:
+        print("Warning: index is None. Use index = 0 for sample plot.")
+        index = 0
     # sensitivity: mV/um, stiffness: N/um, so force = stiffness * position_sample, voltage: mV
     plt.figure()
     if index != None:
