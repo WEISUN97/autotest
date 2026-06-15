@@ -138,7 +138,7 @@ if __name__ == "__main__":
         stage_settings=setting_test,
         chip_name="V1_R_W_1_Left",
         # chip_name="SiN_beam"
-        sample_name="test_AFM3_450_w5_2",  # test_1_left2, test_1_left, test_1, w=10
+        sample_name="test_AFM3_450_w15_3",  # test_1_left2, test_1_left, test_1, w=10
         # sample_name="w2",  # test_1_right, w=20
         ifshow=False,  # if show F-X curve
         show_signal=False,  # if show voltage signal (if show F-X, show_signal will be set to False automatically)
