@@ -118,8 +118,8 @@ if __name__ == "__main__":
     # Define default values for the stage movement
     setting_test = {
         "start_position": 0,
-        "step_size": 0.1,
-        "step_number": 50,
+        "step_size": 0.05,
+        "step_number": 60,
         "step_size_z": 0,
         "repeat_number": 1,
         "position_z": 0,
@@ -142,6 +142,6 @@ if __name__ == "__main__":
         # sample_name="w2",  # test_1_right, w=20
         ifshow=False,  # if show F-X curve
         show_signal=False,  # if show voltage signal (if show F-X, show_signal will be set to False automatically)
-        ifupdate_git=False,  # if update git after measurement
+        ifupdate_git=True,  # if update git after measurement
         commit_message="sample test",  # git commit message
     )
