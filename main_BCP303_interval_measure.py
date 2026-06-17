@@ -27,6 +27,7 @@ def operation(
     show_signal=False,
     ifupdate_git=False,
     commit_message="",
+    return_back=False,
 ):
     repeat_number = stage_settings["repeat_number"]
     step_size = stage_settings["step_size"]
@@ -34,7 +35,8 @@ def operation(
     time_interval = stage_settings["time_interval"]
     start_position = stage_settings["start_position"]
     step_size_z = stage_settings["step_size_z"]
-    total_steps = repeat_number * step_number
+    return_back = stage_settings["return_back"]
+    total_steps = repeat_number * step_number * (2 if return_back else 1)
     count = 1
     formatted_time = datetime.now().strftime("%Y%m%d%H%M")
     try:
@@ -68,11 +70,18 @@ def operation(
             ]
             allData[i]["voltage"].append(voltage)
             time.sleep(1)
-            for step in range(step_number):
+            for step in range(step_number * (2 if return_back else 1)):
+                if step == step_number and return_back:
+                    back_positions = allData[i]["position"][::-1]
                 step_start = time.perf_counter()
                 position = bcp303.bcp303_move_stage(
                     step_size=step_size,
                     current_position=position,
+                    target_position=(
+                        None
+                        if step < step_number
+                        else back_positions[step - step_number]
+                    ),
                 )
                 allData[i]["position"].append(position)
                 voltage = sm2401.measure_voltage(duration=time_interval / 2, dt=0.01)[
@@ -119,11 +128,12 @@ if __name__ == "__main__":
     setting_test = {
         "start_position": 0,
         "step_size": 0.1,
-        "step_number": 50,
+        "step_number": 40,
         "step_size_z": 0,
         "repeat_number": 1,
         "position_z": 0,
         "time_interval": 2,  # duration = time_interval / 2
+        "return_back": True,
     }
     setting = {
         "start_position": 2,
@@ -133,15 +143,16 @@ if __name__ == "__main__":
         "repeat_number": 5,
         "position_z": 0,
         "time_interval": 2,  # duration = time_interval / 2
+        "return_back": False,
     }
     operation(
         stage_settings=setting_test,
         chip_name="V1_R_W_1_Left",
         # chip_name="SiN_beam"
-        sample_name="test_AFM4_450_w20_4",
+        sample_name="test_AFM4_450_w5_4_return",
         # sample_name="w2",  # test_1_right, w=20
         ifshow=False,  # if show F-X curve
         show_signal=False,  # if show voltage signal (if show F-X, show_signal will be set to False automatically)
-        ifupdate_git=True,  # if update git after measurement
+        ifupdate_git=False,  # if update git after measurement
         commit_message="sample test",  # git commit message
     )

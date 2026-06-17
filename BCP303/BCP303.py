@@ -121,10 +121,13 @@ class BPC303:
         self,
         step_size=1,
         current_position=0,
+        target_position=None,
     ):
         # step_size in um, time_interval in seconds
         try:
-            position = current_position + step_size
+            if not target_position:
+                target_position = current_position + step_size
+            position = target_position
             self.channel.SetPosition(Decimal(position))
             time.sleep(0.5)
             currentPosition = float(str(self.channel.GetPosition()))
