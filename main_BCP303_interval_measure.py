@@ -127,12 +127,12 @@ if __name__ == "__main__":
     # Define default values for the stage movement
     return_back = True
     setting_test = {
-        "start_position": 1,
-        "step_size": 0.05,
-        "step_number": 20,
+        "start_position": 0,
+        "step_size": 0.02,
+        "step_number": 30,
         "step_size_z": 0.02,
-        "repeat_number": 3,
-        "position_z": 6,
+        "repeat_number": 1,
+        "position_z": 0,
         "time_interval": 2,  # duration = time_interval / 2
         "return_back": return_back,
     }
