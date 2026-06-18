@@ -125,15 +125,16 @@ def operation(
 
 if __name__ == "__main__":
     # Define default values for the stage movement
+    return_back = True
     setting_test = {
         "start_position": 0,
-        "step_size": 0.1,
+        "step_size": 0.02,
         "step_number": 40,
-        "step_size_z": 0,
+        "step_size_z": 0.05,
         "repeat_number": 1,
         "position_z": 0,
         "time_interval": 2,  # duration = time_interval / 2
-        "return_back": True,
+        "return_back": return_back,
     }
     setting = {
         "start_position": 2,
@@ -149,7 +150,7 @@ if __name__ == "__main__":
         stage_settings=setting_test,
         chip_name="V1_R_W_1_Left",
         # chip_name="SiN_beam"
-        sample_name="test_AFM4_450_w5_4_return",
+        sample_name=f"test_AFM4_450_w20_4{'_return' if return_back else ''}",
         # sample_name="w2",  # test_1_right, w=20
         ifshow=False,  # if show F-X curve
         show_signal=False,  # if show voltage signal (if show F-X, show_signal will be set to False automatically)
