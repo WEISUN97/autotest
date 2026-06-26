@@ -152,7 +152,7 @@ def find_last_zero_before_valid(
 
 
 def plot_data_sample(
-    data, index=0, show=False, file_path="", sensitivity=180, stiffness=8.8 * 1e-6
+    data, index=0, show=False, file_path="", sensitivity=535, stiffness=8.8 * 1e-6
 ):
     if index is None:
         print("Warning: index is None. Use index = 0 for sample plot.")

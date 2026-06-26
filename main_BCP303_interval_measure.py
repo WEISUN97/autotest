@@ -148,10 +148,11 @@ if __name__ == "__main__":
     }
     operation(
         stage_settings=setting_test,
-        chip_name="stiff_boundry_test_1",
+        # chip_name="stiff_boundry_test_1",
+        chip_name="V1_R_W_1_Left",
         # chip_name="SiN_beam"
-        sample_name="AFM3_450_boundary_2",
-        # sample_name=f"test_AFM4_450_w20_4{'_return' if return_back else ''}",
+        # sample_name="AFM3_450_boundary_2",
+        sample_name=f"test_AFM3_450_w10_5{'_return' if return_back else ''}",
         # sample_name="w2",  # test_1_right, w=20
         ifshow=False,  # if show F-X curve
         show_signal=False,  # if show voltage signal (if show F-X, show_signal will be set to False automatically)
