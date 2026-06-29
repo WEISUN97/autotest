@@ -130,9 +130,9 @@ if __name__ == "__main__":
         "start_position": 1,
         "step_size": 0.1,
         "step_number": 30,
-        "step_size_z": 0.1,
-        "repeat_number": 50,
-        "position_z": 7.5,
+        "step_size_z": 0.5,
+        "repeat_number": 10,
+        "position_z": 5,
         "time_interval": 2,  # duration = time_interval / 2
         "return_back": return_back,
     }
