@@ -210,7 +210,7 @@ def post_process(
         os.makedirs(f"{prefix}", exist_ok=True)
         sample_name = f"{sample_name}_z{position_z:.4f}"
     else:
-        prefix = f"./result/{chip_name}"
+        prefix = f"./result/{chip_name}_z{position_z:.4f}"
     file_path = f"{prefix}/{formatted_time}_{sample_name}"
     os.makedirs(file_path, exist_ok=True)
     suffix = f"{formatted_time}_{chip_name}_{sample_name}"
