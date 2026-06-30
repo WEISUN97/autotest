@@ -131,7 +131,7 @@ if __name__ == "__main__":
         "step_size": 0.05,
         "step_number": 60,
         "step_size_z": 0.1,
-        "repeat_number": 1,
+        "repeat_number": 20,
         "position_z": 0,
         "time_interval": 2,  # duration = time_interval / 2
         "return_back": return_back,
