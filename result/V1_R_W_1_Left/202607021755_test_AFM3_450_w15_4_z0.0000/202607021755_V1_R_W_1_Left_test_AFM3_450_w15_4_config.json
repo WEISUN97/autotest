@@ -2,7 +2,7 @@
     "stage": {
         "start_position": 0,
         "step_size": 0.02,
-        "step_number": 60,
+        "step_number": 50,
         "step_size_z": 0,
         "repeat_number": 1,
         "position_z": 0.0,
@@ -25,46 +25,6 @@
             ":OUTP ON"
         ],
         "measure": [
-            {
-                "duration": 1.0,
-                "dt": 0.01
-            },
-            {
-                "duration": 1.0,
-                "dt": 0.01
-            },
-            {
-                "duration": 1.0,
-                "dt": 0.01
-            },
-            {
-                "duration": 1.0,
-                "dt": 0.01
-            },
-            {
-                "duration": 1.0,
-                "dt": 0.01
-            },
-            {
-                "duration": 1.0,
-                "dt": 0.01
-            },
-            {
-                "duration": 1.0,
-                "dt": 0.01
-            },
-            {
-                "duration": 1.0,
-                "dt": 0.01
-            },
-            {
-                "duration": 1.0,
-                "dt": 0.01
-            },
-            {
-                "duration": 1.0,
-                "dt": 0.01
-            },
             {
                 "duration": 1.0,
                 "dt": 0.01
