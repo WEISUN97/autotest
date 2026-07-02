@@ -127,9 +127,9 @@ if __name__ == "__main__":
     # Define default values for the stage movement
     return_back = False  # Set to True if you want the stage to return to the starting position after each repeat
     setting_test = {
-        "start_position": 0,
+        "start_position": 0.5,
         "step_size": 0.05,
-        "step_number": 30,
+        "step_number": 25,
         "step_size_z": 0,
         "repeat_number": 1,
         "position_z": 0,
