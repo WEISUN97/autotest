@@ -4,6 +4,7 @@ from tool.tools import post_process
 import time
 from datetime import datetime
 from tool.git_update import git_update
+import winsound
 
 """
 Operation process:
@@ -121,6 +122,7 @@ def operation(
         bcp303.bcp303_stop(ifback=True)
         if ifupdate_git:
             git_update(commit_message=commit_message)
+        winsound.MessageBeep()
         return allData, settings
 
 
@@ -144,7 +146,7 @@ if __name__ == "__main__":
         chip_name="V1_R_W_1_Left",
         # chip_name="SiN_beam"
         # sample_name="AFM3_450_boundary_2",
-        sample_name=f"test_AFM3_450_w20_1{'_return' if return_back else ''}",
+        sample_name=f"test_AFM3_450_w15_1{'_return' if return_back else ''}",
         # sample_name="w2",  # test_1_right, w=20
         ifshow=False,  # if show F-X curve
         show_signal=False,  # if show voltage signal (if show F-X, show signal will be set to False automatically)
