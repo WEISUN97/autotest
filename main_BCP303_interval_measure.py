@@ -146,7 +146,7 @@ if __name__ == "__main__":
         chip_name="V1_R_W_1_Left",
         # chip_name="SiN_beam"
         # sample_name="AFM3_450_boundary_2",
-        sample_name=f"test_AFM3_450_w15_1{'_return' if return_back else ''}",
+        sample_name=f"test_AFM3_450_w5_3{'_return' if return_back else ''}",
         # sample_name="w2",  # test_1_right, w=20
         ifshow=False,  # if show F-X curve
         show_signal=False,  # if show voltage signal (if show F-X, show signal will be set to False automatically)
