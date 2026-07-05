@@ -132,7 +132,7 @@ if __name__ == "__main__":
     setting_test = {
         "start_position": 0.0,
         "step_size": 0.05,
-        "step_number": 40,
+        "step_number": 30,
         "step_size_z": 0,
         "repeat_number": 1,
         "position_z": 0,
