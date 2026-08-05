@@ -4,7 +4,7 @@ from datetime import datetime
 
 def git_update(commit_message=""):
 
-    repo_dir = r"C:\Users\cnmuser\Desktop\Non-hookean\autotest"
+    repo_dir = r"C:\Users\wsun7\Desktop\Project\Nonhookean\autotest"
 
     formatted_time = datetime.now().strftime("%Y%m%d%H%M")
 
