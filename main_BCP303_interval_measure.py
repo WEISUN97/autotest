@@ -116,7 +116,8 @@ def operation(
         print(f"Exception occurred: {e}")
     finally:
         time.sleep(0.5)
-        sm2401.close()
+        if sm2401 is not None:
+            sm2401.close()
         bcp303_z.move_to_origin()
         bcp303_z.channel.StopPolling()
         bcp303.bcp303_stop(ifback=True)
@@ -143,7 +144,7 @@ if __name__ == "__main__":
     operation(
         stage_settings=setting_test,
         # chip_name="stiff_boundry_test_1",
-        chip_name="V1_R_W1_Right",
+        chip_name="V1_R_W_1_Right",
         # chip_name="SiN_beam"
         # sample_name="AFM3_450_boundary_2"
         sample_name=f"test_AFM3_450_w20_3{'_return' if return_back else ''}",
