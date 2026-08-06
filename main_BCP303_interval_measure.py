@@ -131,7 +131,7 @@ if __name__ == "__main__":
     # Define default values for the stage movement
     return_back = False  # Set to True if you want the stage to return to the starting position after each repeat
     setting_test = {
-        "start_position": 1,
+        "start_position": 1.5,
         "step_size": 0.05,
         "step_number": 40,
         "step_size_z": 0,
@@ -144,10 +144,10 @@ if __name__ == "__main__":
     operation(
         stage_settings=setting_test,
         # chip_name="stiff_boundry_test_1",
-        chip_name="stiff_boundry_test_1",
+        chip_name="V1_R_S_1_L",
         # chip_name="SiN_beam"
         # sample_name="AFM3_450_boundary_2"
-        sample_name=f"AFM5_450{'_return' if return_back else ''}",
+        sample_name=f"test_W15_4{'_return' if return_back else ''}",
         # sample_name="w2",  # test_1_right, w=20
         ifshow=False,  # if show F-X curve
         show_signal=False,  # if show voltage signal (if show F-X, show signal will be set to False automatically)
