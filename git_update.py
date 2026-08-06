@@ -1,4 +1,4 @@
 from tool.git_update import git_update
 import os
 
-git_update(commit_message="test run")
+git_update(commit_message="afm5 calibration")
