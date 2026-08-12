@@ -133,7 +133,7 @@ if __name__ == "__main__":
     setting_test = {
         "start_position": 0.5,
         "step_size": 0.1,
-        "step_number": 30,
+        "step_number": 25,
         "step_size_z": 0,
         "repeat_number": 1,
         "position_z": 0,
@@ -147,7 +147,7 @@ if __name__ == "__main__":
         # chip_name="V1_R_S_1_L",
         # chip_name="SiN_beam"
         # sample_name="AFM3_450_boundary_2"
-        sample_name=f"AFM6_450_test_w20_4{'_return' if return_back else ''}",
+        sample_name=f"AFM5_450_test_w15_2{'_return' if return_back else ''}",
         # sample_name="w2",  # test_1_right, w=20
         ifshow=False,  # if show F-X curve
         show_signal=False,  # if show voltage signal (if show F-X, show signal will be set to False automatically)
