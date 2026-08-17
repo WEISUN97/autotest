@@ -155,7 +155,7 @@ def plot_data_sample(
     # afm 3 sensitivity=180 stiffness=8.8 * 1e-6  
     # afm 5 sensitivity=78  stiffness=2.2 * 1e-6 
     # afm 6 sensitivity=160
-    data, index=0, show=False, file_path="", sensitivity=75, stiffness=2.2 * 1e-6
+    data, index=0, show=False, file_path="", sensitivity=180, stiffness=8.8 * 1e-6
 ):
     if index is None:
         print("Warning: index is None. Use index = 0 for sample plot.")
@@ -206,6 +206,8 @@ def post_process(
     ifshow=False,
     show_signal=False,
     formatted_time="",
+    sensitivity=180, 
+    stiffness=8.8 * 1e-6
 ):
     os.makedirs(f"./result/{chip_name}", exist_ok=True)
     if repeat > 1:
@@ -250,6 +252,8 @@ def post_process(
         index=index,
         show=ifshow,
         file_path=os.path.join(file_path, f"{suffix}_sample_plot.png"),
+        sensitivity=sensitivity, 
+        stiffness=stiffness
     )
 
 
