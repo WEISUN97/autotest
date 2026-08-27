@@ -1,4 +1,4 @@
 from tool.git_update import git_update
 import os
 
-git_update(commit_message="afm6 data1")
+git_update(commit_message="afm6 v1RS-1-left")
