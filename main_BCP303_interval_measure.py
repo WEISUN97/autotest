@@ -135,9 +135,9 @@ if __name__ == "__main__":
     # Define default values for the stage movement
     return_back = False  # Set to True if you want the stage to return to the starting position after each repeat
     setting_test = {
-        "start_position": 1,
-        "step_size": 0.05,
-        "step_number": 60,
+        "start_position": 0,
+        "step_size": 0.02,
+        "step_number": 150,
         "step_size_z": 0,
         "repeat_number": 1,
         "position_z": 0,
@@ -151,7 +151,7 @@ if __name__ == "__main__":
         stage_settings=setting_test,
         chip_name="V1_R_W_1_Left",  # chip name, for example: V1_R_W_2_Right
         # sample_name="AFM7_450_boundary_2",
-        sample_name=f"AFM6_450_w20_2{'_return' if return_back else ''}",
+        sample_name=f"AFM6_450_w15_2{'_return' if return_back else ''}",
         # sample_name="w2",  # test_1_right, w=20
         ifshow=False,  # if show F-X curve
         show_signal=False,  # if show voltage signal (if show F-X, show signal will be set to False automatically)
