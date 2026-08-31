@@ -1,4 +1,4 @@
 from tool.git_update import git_update
 import os
 
-git_update(commit_message="afm6 boundary_new connection")
+git_update(commit_message="afm6 connection")
