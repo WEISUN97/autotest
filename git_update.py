@@ -1,4 +1,4 @@
 from tool.git_update import git_update
 import os
 
-git_update(commit_message="afm100_1")
+git_update(commit_message="test and calibration")

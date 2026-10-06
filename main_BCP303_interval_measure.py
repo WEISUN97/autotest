@@ -73,7 +73,9 @@ def operation(
             ]
             allData[i]["voltage"].append(voltage)
             time.sleep(1)
+            target_temp = position
             for step in range(step_number * (2 if return_back else 1)):
+                target_temp += step_size
                 if step == step_number and return_back:
                     back_positions = allData[i]["position"][::-1]
                 step_start = time.perf_counter()
@@ -85,6 +87,7 @@ def operation(
                         if step < step_number
                         else back_positions[step - step_number]
                     ),
+                    target_temp=target_temp,
                 )
                 allData[i]["position"].append(position)
                 voltage = sm2401.measure_voltage(duration=time_interval / 2, dt=0.01)[
@@ -144,16 +147,16 @@ if __name__ == "__main__":
         "time_interval": 2,  # duration = time_interval / 2
         "return_back": return_back,
         # "sensitivity": 478,
-        "sensitivity": 2000,
-        "stiffness": 240*1e-6
+        "sensitivity": 400,
+        "stiffness": 18.5*1e-6
     }
 
     operation(
         stage_settings=setting_test,
         # chip_name="stiff_boundry_test_1",  # chip name, for example: V1_R_W_2_Right
         chip_name="V1_R_W_1_Left",
-        # sample_name="AFM_100_1_boundary_1",
-        sample_name=f"AFM6_100_1_w5_2{'_return' if return_back else ''}",
+        # sample_name="AFM_300_1_boundary_3",
+        sample_name=f"AFM_300_4_w5_3{'_return' if return_back else ''}",
         ifshow=False,  # if show F-X curve
         show_signal=False,  # if show voltage signal (if show F-X, show signal will be set to False automatically)
         ifupdate_git=False,  # if update git after measurement
