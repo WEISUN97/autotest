@@ -90,9 +90,10 @@ def operation(
                     target_temp=target_temp,
                 )
                 allData[i]["position"].append(position)
-                voltage = sm2401.measure_voltage(duration=time_interval / 2, dt=0.01)[
-                    "voltage"
-                ]
+                # voltage = sm2401.measure_voltage(duration=time_interval / 2, dt=0.01)[
+                #     "voltage"
+                # ]
+                voltage = sm2401.measure_voltage(duration=1, dt=0.01)["voltage"]
                 allData[i]["voltage"].append(voltage)
                 # remaining time to wait until the next step
                 elapsed = time.perf_counter() - step_start
@@ -138,25 +139,25 @@ if __name__ == "__main__":
     # Define default values for the stage movement
     return_back = False  # Set to True if you want the stage to return to the starting position after each repeat
     setting_test = {
-        "start_position": 0,
-        "step_size": 0.1,
-        "step_number": 30,
+        "start_position": 0.5,
+        "step_size": 0.01,
+        "step_number": 200,
         "step_size_z": 0,
         "repeat_number": 1,
         "position_z": 0,
-        "time_interval": 2,  # duration = time_interval / 2
+        "time_interval": 1.5,  # duration = time_interval / 2
         "return_back": return_back,
         # "sensitivity": 478,
-        "sensitivity": 400,
-        "stiffness": 18.5*1e-6
+        "sensitivity": 440,
+        "stiffness": 22.27*1e-6
     }
 
     operation(
         stage_settings=setting_test,
         # chip_name="stiff_boundry_test_1",  # chip name, for example: V1_R_W_2_Right
-        chip_name="V1_R_W_1_Left",
+        chip_name="V1_R_W_1_Right",  # chip name, for example: V1_R_W_2_Right
         # sample_name="AFM_300_1_boundary_3",
-        sample_name=f"AFM_300_4_w5_3{'_return' if return_back else ''}",
+        sample_name=f"AFM_300_4_w20_3{'_return' if return_back else ''}",
         ifshow=False,  # if show F-X curve
         show_signal=False,  # if show voltage signal (if show F-X, show signal will be set to False automatically)
         ifupdate_git=False,  # if update git after measurement
