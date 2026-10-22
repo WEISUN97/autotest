@@ -155,9 +155,9 @@ if __name__ == "__main__":
     operation(
         stage_settings=setting_test,
         # chip_name="stiff_boundry_test_1",  # chip name, for example: V1_R_W_2_Right
-        chip_name="V1_R_S_1_Right",  # chip name, for example: V1_R_W_2_Right
+        chip_name="V1_R_S_2_Left",  # chip name, for example: V1_R_W_2_Right
         # sample_name="AFM_300_1_boundary_3",
-        sample_name=f"AFM_300_4_w5_6{'_return' if return_back else ''}",
+        sample_name=f"AFM_300_4_w5_5{'_return' if return_back else ''}",
         ifshow=False,  # if show F-X curve
         show_signal=False,  # if show voltage signal (if show F-X, show signal will be set to False automatically)
         ifupdate_git=False,  # if update git after measurement
